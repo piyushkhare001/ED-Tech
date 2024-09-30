@@ -20,3 +20,25 @@ export default withAuth(async (req) => {
     return NextResponse.redirect(new URL("/invalidsession", req.url));
   }
 });
+
+// THis will be used in future versions for checking admin and teacher credentials
+// import { NextApiRequest, NextApiResponse } from 'next';
+// import { User, IUser } from '../models';
+
+// export async function isAdmin(req: NextApiRequest, res: NextApiResponse, next: () => void) {
+//   const user: IUser | null = await User.findById(req.body.userId);
+//   if (user && user.role === 'admin') {
+//     next();
+//   } else {
+//     res.status(403).json({ message: 'Access denied' });
+//   }
+// }
+
+// export async function isTeacher(req: NextApiRequest, res: NextApiResponse, next: () => void) {
+//   const user: IUser | null = await User.findById(req.body.userId);
+//   if (user && (user.role === 'teacher' || user.role === 'admin')) {
+//     next();
+//   } else {
+//     res.status(403).json({ message: 'Access denied' });
+//   }
+// }
