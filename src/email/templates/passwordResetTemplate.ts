@@ -75,6 +75,7 @@ const passwordResetTemplate = (resetLink: string): string => {
         <div class="content">
           <h2 class="title">Reset Your Password</h2>
           <p class="message">We received a request to reset your password for your DESIZNIDEAZ account. If you didn't make this request, you can safely ignore this email.</p>
+          <p>Click this link to reset your password: ${resetLink}</p>
           <a href="${resetLink}" class="reset-button">Reset Password</a>
           <p class="message">This link will expire in 1 hour for security reasons. If you need to reset your password after that, please request a new reset link.</p>
           <p>If you're having trouble clicking the button, copy and paste the URL below into your web browser:</p>

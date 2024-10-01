@@ -7,6 +7,8 @@ export interface IUser {
   appxUserId?: string;
   appxUsername?: string;
   coupons: mongoose.Types.ObjectId[];
+  resetPasswordToken?: string;
+  resetPasswordExpiresAt?: Date;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -18,6 +20,8 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "studentPartner", "admin", "teacher"],
     default: "student",
   },
+  resetPasswordToken: { type: String },
+  resetPasswordExpiresAt: { type: Date },
   appxUserId: { type: String },
   appxUsername: { type: String },
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
@@ -27,3 +31,6 @@ const UserSchema = new mongoose.Schema<IUser>({
 export const User: Model<IUser> =
   (mongoose.models.User as Model<IUser>) ||
   mongoose.model<IUser>("User", UserSchema);
+
+
+  export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
