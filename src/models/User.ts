@@ -1,4 +1,5 @@
 import mongoose, { Model } from "mongoose";
+
 export interface IUser {
   name?: string;
   email: string;
@@ -9,6 +10,7 @@ export interface IUser {
   coupons: mongoose.Types.ObjectId[];
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
+  enrolledCourses: mongoose.Types.ObjectId[];
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -25,6 +27,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   appxUserId: { type: String },
   appxUsername: { type: String },
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
+  enrolledCourses:[{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }]
 });
 
 // Use type assertion to ensure the model has the correct type
