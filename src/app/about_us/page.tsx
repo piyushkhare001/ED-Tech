@@ -1,23 +1,20 @@
-
 'use client'
-// import ContactformSection from "@/components/frontend/ContactFormSection"
-// import Footer from "@/components/frontend/footer"
-// import LearningGrid from "@/components/frontend/LearningGrid"
-// import Quote from "@/components/frontend/Quote"
+import ContactformSection from "@/components/frontend/ContactFormSection"
+import Footer from "@/components/frontend/footer"
+import LearningGrid from "@/components/frontend/LearningGrid"
+import Quote from "@/components/frontend/Quote"
 
 
-// import Stats from "@/components/frontend/Stats"
+import Stats from "@/components/frontend/Stats"
 
   const AboutUs = () => {
     return((
         <div>
-             {/* <ContactformSection/>
+             <ContactformSection/>
              <Quote/>
              <LearningGrid/>
              <Stats/>
-             <Footer/> */}
-
-             <p>about pagehad assign tu anuska bu still pending</p>
+             <Footer/>
 
         </div>
         
