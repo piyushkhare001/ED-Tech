@@ -6,9 +6,7 @@ export async function POST(request: Request) {
     try {
       await connectToMongoDB();
       const { title, description, openToEveryone } = await request.json();
-  
       const searchCriteria: any = {};
-  
       if (title) {
         searchCriteria.title = { $regex: title, $options: 'i' };
       }
@@ -19,7 +17,6 @@ export async function POST(request: Request) {
         searchCriteria.openToEveryone = openToEveryone;
       }
       const courses = await Course.find(searchCriteria);
-  
       return NextResponse.json({ courses }, { status: 200 });
     } catch (error) {
       return NextResponse.json({ message: 'Something went wrong', error: error}, { status: 500 });
