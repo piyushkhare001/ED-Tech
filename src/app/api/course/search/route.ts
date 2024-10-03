@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { Course } from "../../../../models/Course"; // Adjust the path as necessary
 import connectToMongoDB from "@/lib/mognodb";
 

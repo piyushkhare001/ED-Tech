@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { Course } from "../../../../models/Course";
 import { User } from "../../../../models/User";
 import connectToMongoDB from "@/lib/mognodb";
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       );
     }
     course.purchasedBy.push(userId);
-    user.courses.push({courseId});
+ //   user.courses.push({courseId});
     
     await course.save();
     await user.save();
