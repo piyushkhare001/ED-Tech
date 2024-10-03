@@ -1,8 +1,12 @@
+
 'use client';
 import RazorpayButton from '@/components/frontend/TestingPaymentPage';
 
+
+import Footer from "@/components/frontend/footer";
 export default function Home() {
   return (
+<div>
     <div className="text-center text-4xl font-sans mt-8 ">
       Welcome to DESIZNIDEAZ
       <p className="text-center text-4xl font-sans mt-8">
@@ -10,5 +14,13 @@ export default function Home() {
       </p>
       <RazorpayButton amount={1} />
     </div>
+
+  
+    
+           
+              <Footer/>
+
+     </div>
   );
 }
+

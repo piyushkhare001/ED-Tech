@@ -19,7 +19,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
 
   const handlePayment = async () => {
     // Fetch the order from your API
-    const response = await fetch('/api/createOrder', {
+    const response = await fetch('/api/payment/create-order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -55,8 +55,34 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
       name: 'Your Company Name',
       description: 'Test Transaction',
       order_id: order.id, // Use the order ID returned by the API
-      handler: function (response: any) {
-        alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
+      handler: async function (response: any) {
+        // Payment was successful, now verify it
+        const verifyResponse = await fetch('/api/payment/verify-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            courses: [] // Add the courses or relevant data here
+          }),
+        });
+
+        if (!verifyResponse.ok) {
+          const errorText = await verifyResponse.text();
+          console.error('Payment verification failed:', errorText);
+          alert('Payment verification failed. Please try again.');
+          return;
+        }
+
+        const verifyData = await verifyResponse.json();
+        if (verifyData.success) {
+          alert('Payment successful and verified!');
+        } else {
+          alert('Payment verification failed. Please check your payment status.');
+        }
       },
       prefill: {
         name: 'John Doe',

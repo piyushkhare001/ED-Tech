@@ -1,8 +1,7 @@
 'use client'
-
-
-export default const Navbar = () => {
+ const Navbar = () => {
     return (
         <>this is nabvar </>
     )
 }
+export default Navbar
