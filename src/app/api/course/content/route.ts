@@ -1,7 +1,7 @@
 // app/api/content/route.ts
 import { NextResponse } from 'next/server';
 //import mongoose from 'mongoose';
-import { Content } from '../../../../models/Content'; // Adjust the import path as needed
+import { Content } from '../../../../models/Lecture'; // Adjust the import path as needed
 import connectToMongoDB from '@/lib/mognodb';
 
 // Handle GET and POST requests for Content
