@@ -1,18 +1,25 @@
-'use  client'
+"use client";
 
-export default function Home() {
+import Hero from "components/Hero/Hero";
+import MobileNav from "components/Navbar/MobileNav";
+import Navbar from "components/Navbar/Navbar";
+import { useState } from "react";
+
+const Home = () => {
+  const [nav, setNav] = useState(false);
+  const openNav = () => setNav(true);
+  const closeNav = () => setNav(false);
   return (
-  <>
-     <div className="text-center text-4xl font-sans mt-8 ">
-              Welcome to DESIZNIDEAZ 
-
-
-             <p className="text-center text-4xl font-sans mt-8 ">piyush is very good guy  he always helps me i realy want to thankyou him 
-              
-              
-              </p> 
-          <p> sradha is </p>
-     </div>
-     </>
+    <div className="overflow-x-hidden flex flex-col gap-[100px]">
+      <div>
+        {/*Navbar section*/}
+        <MobileNav nav={nav} closeNav={closeNav}/>
+        <Navbar openNav={openNav}/>
+        {/*Hero section*/}
+        <Hero />
+      </div>
+    </div>
   );
-}
+};
+
+export default Home;
