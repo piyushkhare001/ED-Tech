@@ -192,7 +192,7 @@ const Hero = () => {
         <div className='bg-slate-900 h-[800px] lg:h-[500px]'>
             <div className='pt-6 container'>
                 <h1 className='text-3xl lg:text-5xl items-center justify-center pt-6 font-bold text-center text-slate-100 bg-gradient-to-r from-sky-400 via-blue-300 to-blue-500 text-transparent bg-clip-text'>Certification Course </h1>
-                <p className='text-yellow-300 text-center pt-4 text-lg lg:text-2xl font-medium'>Fastest way to build your CV</p>
+                <p className='text-yellow-300 text-center pt-4 text-lg lg:text-2xl font-medium'>Fastest way to build your CV.</p>
                 <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 pt-14 lg:pl-[90px] lg:gap-48 gap-24 -ml-14'>
                     {Certification.map((data) => (
                         <div
