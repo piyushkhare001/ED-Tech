@@ -1,5 +1,13 @@
 import mongoose, { Model } from "mongoose";
 
+export interface ICourseProgress {
+  courseId: mongoose.Types.ObjectId; // Reference to the course
+  completedContent: mongoose.Types.ObjectId[]; // List of completed content
+  progressPercentage: number; // Percentage of course completed
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IUser {
   name?: string;
   email: string;
@@ -10,7 +18,7 @@ export interface IUser {
   coupons: mongoose.Types.ObjectId[];
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
-  enrolledCourses: mongoose.Types.ObjectId[];
+  courses: ICourseProgress[]; // Merged field for enrolled courses and progress
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -27,7 +35,13 @@ const UserSchema = new mongoose.Schema<IUser>({
   appxUserId: { type: String },
   appxUsername: { type: String },
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
-  enrolledCourses:[{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }]
+  courses: [{
+    courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
+    completedContent: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }],
+    progressPercentage: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  }],
 });
 
 // Use type assertion to ensure the model has the correct type
@@ -35,5 +49,4 @@ export const User: Model<IUser> =
   (mongoose.models.User as Model<IUser>) ||
   mongoose.model<IUser>("User", UserSchema);
 
-
-  export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+export default User;

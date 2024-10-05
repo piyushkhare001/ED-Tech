@@ -1,5 +1,5 @@
 import mongoose, { Model } from "mongoose";
-export interface IContent {
+export interface Ilecture {
   type: string;
   title: string;
   hidden: boolean;
@@ -13,7 +13,7 @@ export interface IContent {
   commentsCount: number;
 }
 
-const ContentSchema = new mongoose.Schema<IContent>({
+const LectureSchema = new mongoose.Schema<Ilecture>({
   type: { type: String, default: "folder" },
   title: String,
   hidden: { type: Boolean, default: false },
@@ -27,5 +27,5 @@ const ContentSchema = new mongoose.Schema<IContent>({
   commentsCount: { type: Number, default: 0 },
 });
 
-export const Content: Model<IContent> =
-  mongoose.models.Content || mongoose.model<IContent>("Content", ContentSchema);
+export const Lecture: Model<Ilecture> =
+  mongoose.models.Lecture || mongoose.model<Ilecture>("Content", LectureSchema);
