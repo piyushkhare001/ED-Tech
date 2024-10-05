@@ -1,12 +1,12 @@
 
 "use client";
 
-import Hero from "components/Hero/Hero";
-import MobileNav from "components/Navbar/MobileNav";
-import Navbar from "components/Navbar/Navbar";
+import Footer from "components/frontend/footer";
+import RazorpayButton from "components/frontend/TestingPaymentPage";
+import Hero from "components/frontend/Hero";
+import MobileNav from "components/frontend/MobileNav";
+import Navbar from "components/frontend/Navbar";
 import { useState } from "react";
-import RazorpayButton from '@/components/frontend/TestingPaymentPage';
-import Footer from "@/components/frontend/footer";
 
 const Home = () => {
   const [nav, setNav] = useState(false);
