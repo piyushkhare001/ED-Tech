@@ -70,6 +70,7 @@ const Navbar =({openNav}:Props) => {
                     <div className="relative group hidden lg:block pt-3 -mr-11 gap-2">
                         <button className="border-2 w-[110px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black mr-4">Login</button>
                         <button className="bg-slate-600 w-[125px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black">SignUp</button>
+                        
                     </div> 
                     <div onClick={openNav} className='flex lg:hidden text-white'>
                         <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-yellow-200 -mr-12 mt-3'/>

@@ -21,11 +21,9 @@
         "name": "next"
       }
     ],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@assets/*": [
-        "assets/*"
-      ]
+      "@/*": ["src/*"]
     }
   },
   "include": [

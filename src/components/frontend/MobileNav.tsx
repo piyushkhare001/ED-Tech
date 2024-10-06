@@ -1,6 +1,9 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import React from 'react'
+import React from 'react';
+import Link from "next/link";
+
+
 
 interface Props {
     nav:boolean;
@@ -23,8 +26,8 @@ const MobileNav = ({nav,closeNav}: Props) => {
                 </ul>
             </div>
             <div className='pt-7 flex flex-col gap-4'>
-                <button className="border-2 w-[140px] h-[52px] rounded-xl text-lg font-bold text-yellow-200 hover:bg-gray-200 hover:text-black transition-all duration-200">Login</button>
-                <button className="bg-slate-600 w-[140px] h-[52px] rounded-xl text-lg font-bold text-yellow-200 hover:bg-gray-200 hover:text-black transition-all duration-200">SignUp</button>
+                    <button className="border-2 w-[140px] h-[52px] rounded-xl text-lg font-bold text-yellow-200 hover:bg-gray-200 hover:text-black transition-all duration-200">Login</button>
+                    <button className="bg-slate-600 w-[140px] h-[52px] rounded-xl text-lg font-bold text-yellow-200 hover:bg-gray-200 hover:text-black transition-all duration-200">SignUp</button>
             </div>
         </div>
         <div onClick={closeNav} className='absolute cursor-pointer top-[3rem] right-[3rem] w-[3rem] h-[3rem] text-yellow-400'>
