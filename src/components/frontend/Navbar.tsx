@@ -1,41 +1,42 @@
-'use client'
-import Image from 'next/image';
-import logo from '@assets/logo.jpeg'
-import { Bars3Icon } from '@heroicons/react/20/solid';
-import {motion} from "framer-motion"
+"use client";
+import Image from "next/image";
+import logo from "../../assets/logo.jpeg";
+import { Bars3Icon } from "@heroicons/react/20/solid";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 interface Props {
-    openNav:() => void;
+  openNav: () => void;
 }
 
 const MenuLinks = [
-    {
-        id: 1,
-        name: "Home",
-        link: "/#"
-    },
-    {
-        id: 2,
-        name: "About",
-        link: "/#about",
-    },
-    
-    {
-        id: 3,
-        name: "Courses",
-        link: "/#courses",
-    },
-    {
-        id: 4,
-        name: "Certificate",
-        link: "/#certificate",
-    },
-    {
-        id: 5,
-        name: "Contact",
-        link: "/#contact",
-    }
-]
+  {
+    id: 1,
+    name: "Home",
+    link: "/#",
+  },
+  {
+    id: 2,
+    name: "About",
+    link: "/#about",
+  },
+
+  {
+    id: 3,
+    name: "Courses",
+    link: "/#courses",
+  },
+  {
+    id: 4,
+    name: "Certificate",
+    link: "/#certificate",
+  },
+  {
+    id: 5,
+    name: "Contact",
+    link: "/#contact",
+  },
+];
 
 const Navbar =({openNav}:Props) => {
     return <>
@@ -70,7 +71,6 @@ const Navbar =({openNav}:Props) => {
                     <div className="relative group hidden lg:block pt-3 -mr-11 gap-2">
                         <button className="border-2 w-[110px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black mr-4">Login</button>
                         <button className="bg-slate-600 w-[125px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black">SignUp</button>
-                        
                     </div> 
                     <div onClick={openNav} className='flex lg:hidden text-white'>
                         <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-yellow-200 -mr-12 mt-3'/>
@@ -79,7 +79,7 @@ const Navbar =({openNav}:Props) => {
                 
             </div>
         </div>
-        <hr/>
+      <hr />
     </>
 };
 

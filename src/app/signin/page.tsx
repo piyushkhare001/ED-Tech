@@ -1,11 +1,12 @@
 
-import { Button } from "@/@/components/ui/button";
-import { Input } from "@/@/components/ui/input";
+
 import { Label } from "@radix-ui/react-label";
 import Image from "next/image";
 import React from "react";
 import { FcGoogle } from 'react-icons/fc';
 import login from '@/assets/login.jpg';
+import { Input } from "src/components/ui/input";
+import { Button } from "src/components/ui/button";
 
 const SignIn =  () => {
   return(
@@ -16,7 +17,7 @@ const SignIn =  () => {
               <h1 className="text-3xl font-semibold">Login</h1>
               <p className="mt-2 text-xs text-slate-400">
                 {' '}
-                See your Courses and updates</p>
+                See your Courses and updates.</p>
             </div>
 
             <form>
