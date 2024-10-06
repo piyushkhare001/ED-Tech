@@ -1,4 +1,4 @@
-const otpTemplate = (otp: number): string => {
+const otpTemplate = (otp: string): string => {
   return `<!DOCTYPE html>
 	<html lang="en">
 	<head>

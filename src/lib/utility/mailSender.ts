@@ -27,7 +27,7 @@ const mailSender = async (
     });
 
     const mailOptions: MailOptions = {
-      from: `"Vogueish" <${process.env.EMAIL_USER}>`,
+      from: `"DesiznIdeaz" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: subject,
       html: emailTemplate,
