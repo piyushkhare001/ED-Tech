@@ -50,7 +50,7 @@ const Signup = () => {
               <h1 className="text-3xl font-semibold">Sign Up</h1>
               <p className="mt-2 text-xs text-slate-400">
                 {' '}
-              Hi, Welcome to DESIZNIDEAZ</p>
+              Welcome to DESIZNIDEAZ</p>
             </div>
           {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
