@@ -17,9 +17,9 @@ const mailSender = async (
 
     // Create a transporter using Nodemailer
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || "587", 10),
-      secure: process.env.EMAIL_SECURE === "true",
+      host: process.env.MAIL_HOST ,
+      port: parseInt(process.env.MAIL_USER || "587", 10),
+      secure: process.env.MAIL_PASS === "true",
       auth: {
         user: testAccount.user,
         pass: testAccount.pass,
@@ -27,7 +27,7 @@ const mailSender = async (
     });
 
     const mailOptions: MailOptions = {
-      from: `"DesiznIdeaz" <${process.env.EMAIL_USER}>`,
+      from: `"DesiznIdeaz" <${process.env.MAIL_USER}>`,
       to: email,
       subject: subject,
       html: emailTemplate,
