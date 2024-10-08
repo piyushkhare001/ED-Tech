@@ -8,3 +8,17 @@
         filter: drop-shadow(6px 8px 10px rgba(0, 0, 0, 0.5));
     }
 }
+
+.box-animate{
+    border-radius: 10px;
+    animation: glow 3s infinite alternate
+}
+
+@keyframes glow {
+    0%{
+        box-shadow: 0 0 5px #fffbeb;
+    }
+    100%{
+        box-shadow: 0 0 20px 10px #fffbeb;
+    }
+}

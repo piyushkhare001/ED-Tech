@@ -1,28 +1,32 @@
 
 "use client";
-
-import Footer from "components/frontend/footer";
-import RazorpayButton from "components/frontend/TestingPaymentPage";
-import Hero from "components/frontend/Hero";
-import MobileNav from "components/frontend/MobileNav";
-import Navbar from "components/frontend/Navbar";
 import { useState } from "react";
+import Footer from "src/components/frontend/footer";
+import Hero from "src/components/frontend/Hero";
+import MobileNav from "src/components/frontend/MobileNav";
+import Navbar from "src/components/frontend/Navbar";
+import RazorpayButton from "src/components/frontend/TestingPaymentPage";
+
+
 
 const Home = () => {
   const [nav, setNav] = useState(false);
   const openNav = () => setNav(true);
   const closeNav = () => setNav(false);
   return (
-    <div className="overflow-x-hidden flex flex-col gap-[100px]">
-      <div>
-        {/*Navbar section*/}
-        <MobileNav nav={nav} closeNav={closeNav}/>
-        <Navbar openNav={openNav}/>
-        {/*Hero section*/}
-        <Hero />
-        <Footer/>
-        <RazorpayButton amount={1} />
+    <div>
+      <div className="overflow-x-hidden flex flex-col gap-[100px]">
+        <div>
+          {/*Navbar section*/}
+          <MobileNav nav={nav} closeNav={closeNav}/>
+          <Navbar openNav={openNav}/>
+          {/*Hero section*/}
+          <Hero />
+          <Footer/>
+          <RazorpayButton amount={1} />
+        </div>
       </div>
+   
     </div>
   );
 };
