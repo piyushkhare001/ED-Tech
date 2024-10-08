@@ -1,6 +1,7 @@
 
 "use client";
 import { useState } from "react";
+import CoursesBuy from "src/components/frontend/CourseBuy";
 import Footer from "src/components/frontend/footer";
 import Hero from "src/components/frontend/Hero";
 import MobileNav from "src/components/frontend/MobileNav";
@@ -22,6 +23,7 @@ const Home = () => {
           <Navbar openNav={openNav}/>
           {/*Hero section*/}
           <Hero />
+          <CoursesBuy />
           <Footer/>
           <RazorpayButton amount={1} />
         </div>
