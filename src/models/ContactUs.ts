@@ -22,4 +22,4 @@ const ContactUsSchema: Schema = new Schema({
 
 });
 
-export default mongoose.models.Request || mongoose.model<ContactUs>('Request', ContactUsSchema);
+export default mongoose.models.Request || mongoose.model<ContactUs>('ContactUs', ContactUsSchema);
