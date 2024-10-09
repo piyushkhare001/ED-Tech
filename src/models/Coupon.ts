@@ -14,7 +14,7 @@ const CouponSchema = new mongoose.Schema<ICoupon>({
   discountPercentage: Number,
   validFrom: Date,
   validUntil: Date,
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "StudentPartner" },
   usageLimit: Number,
   usageCount: { type: Number, default: 0 },
 });
