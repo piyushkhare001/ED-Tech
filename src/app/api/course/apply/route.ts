@@ -1,13 +1,13 @@
-import {  NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../models/Course";
 import { User } from "../../../../models/User";
 import connectToMongoDB from "@/lib/mognodb";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     await connectToMongoDB();
 
-    const { courseId, userId } = await request.json(); 
+    const { courseId, userId } = await request.json();
     const course = await Course.findById(courseId);
     if (!course) {
       return NextResponse.json(
@@ -28,8 +28,8 @@ export async function POST(request: Request) {
       );
     }
     course.purchasedBy.push(userId);
- //   user.courses.push({courseId});
-    
+    //   user.courses.push({courseId});
+
     await course.save();
     await user.save();
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.log(error);
-    
+
     return NextResponse.json(
       { message: "Something went wrong", error: error },
       { status: 500 }
