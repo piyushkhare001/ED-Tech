@@ -48,9 +48,8 @@ export default async function connectToMongoDB() {
   }
 
   try {
-    // Establish a new connection to MongoDB
-    const mongooseInstance = await mongoose.connect(mongoUri);
-
+    // If no cached connection exists, establish a new connection to MongoDB
+    const cnx = await mongoose.connect(process.env.MONGODB_URI!);
     // Cache the connection for future use
     cachedConnection = mongooseInstance.connection;
 
