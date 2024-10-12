@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../models/Course";
 import { User } from "../../../../models/User";
 import connectToMongoDB from "@/lib/mognodb";
+import { getServerSession } from "next-auth/next"; // To get session
+import { authOptions } from "../../../../lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    // Check if the user is authenticated and has the "teacher" role
+    if (!session || session.user.role !== "student") {
+      return NextResponse.json(
+        { message: "Unauthorized access" },
+        { status: 403 }
+      ); // Respond with 403 Forbidden if not a teacher
+    }
     await connectToMongoDB();
 
     const { courseId, userId } = await request.json();
