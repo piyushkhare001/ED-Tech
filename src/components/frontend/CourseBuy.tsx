@@ -37,7 +37,7 @@ const CourseBuy = () => {
 
         {/* Course Content */}
         <div className="border-t border-gray-800 pt-4">
-          <h2 className="text-2xl font-semibold mb-4">What you'll learn</h2>
+          <h2 className="text-2xl font-semibold mb-4">What you will learn</h2>
           <p className="text-gray-400">Very beneficial</p>
 
           <div className="mt-6">

@@ -6,6 +6,7 @@ export interface ICourse {
   description: string;
   openToEveryone: boolean;
   slug: string;
+  price : number,
   content: mongoose.Types.ObjectId[];
   purchasedBy: mongoose.Types.ObjectId[];
   certIssued: boolean;
@@ -19,10 +20,12 @@ const CourseSchema = new mongoose.Schema<ICourse>({
   description: String,
   openToEveryone: { type: Boolean, default: false },
   slug: String,
+  price : Number,
   content: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }],
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   certIssued: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+ 
 });
 
 export const Course: Model<ICourse> =
