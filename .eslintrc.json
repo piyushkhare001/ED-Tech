@@ -2,6 +2,9 @@
   "extends": ["next/core-web-vitals", "next/typescript"],
   "rules": {
     // Todo: investigate, for each of these rules, whether we want them.
+    
+
+ 
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-tslint-comment": "off",
@@ -27,3 +30,5 @@
     "prefer-spread": "off"
   }
 }
+
+
