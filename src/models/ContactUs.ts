@@ -16,5 +16,8 @@ const ContactUsSchema: Schema = new Schema({
   accountType: { type: String, required: true },
 });
 
+
+
 export default mongoose.models.Request ||
   mongoose.model<ContactUs>("ContactUs", ContactUsSchema);
+
