@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { signIn } from 'next-auth/react';
-import { adminAuthOptions } from '@/lib/admin/auth'; // Import your adminAuthOptions
+//import { adminAuthOptions } from '@/lib/admin/auth'; // Import your adminAuthOptions
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Respond with the session data which includes the JWT token
     res.status(200).json({
       message: 'Login successful',
-      token: result.token, // This is the JWT token you can use for authenticated routes
+     // This is the JWT token you can use for authenticated routes
     });
   } else {
     res.setHeader('Allow', ['POST']);
