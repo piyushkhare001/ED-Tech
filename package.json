@@ -20,11 +20,10 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
-<<<<<<< HEAD
+
     "emitter": "^0.0.5",
-=======
+
     "framer-motion": "^11.11.4",
->>>>>>> aa0c1921775a8739b010f87060d55405d93f524f
     "mongoose": "^8.7.0",
     "next": "14.2.13",
     "next-auth": "^4.24.8",
