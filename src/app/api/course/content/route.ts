@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     );
   }
 }
-// Delete a course (DELETE)
+
 export async function DELETE(request: Request) {
   // Get the session from NextAuth
   const session = await getServerSession(authOptions);
@@ -64,7 +64,7 @@ export async function DELETE(request: Request) {
     );
   }
 }
-// Update a course (PUT)
+
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
 
