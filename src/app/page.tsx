@@ -25,9 +25,6 @@ const Home = () => {
           <Navbar openNav={openNav}/>
           {/*Hero section*/}
           <Hero />
-          <CertifiedCourse />
-          <PlacementCourse/>
-          <CoursesBuy />
           <Footer/>
           <RazorpayButton amount={1} />
         </div>

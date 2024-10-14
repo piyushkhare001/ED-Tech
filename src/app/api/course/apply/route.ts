@@ -1,13 +1,24 @@
-import {  NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../models/Course";
 import { User } from "../../../../models/User";
 import connectToMongoDB from "@/lib/mognodb";
+import { getServerSession } from "next-auth/next"; // To get session
+import { authOptions } from "../../../../lib/auth";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    // Check if the user is authenticated and has the "teacher" role
+    if (!session || session.user.role !== "student") {
+      return NextResponse.json(
+        { message: "Unauthorized access" },
+        { status: 403 }
+      ); // Respond with 403 Forbidden if not a teacher
+    }
     await connectToMongoDB();
 
-    const { courseId, userId } = await request.json(); 
+    const { courseId, userId } = await request.json();
     const course = await Course.findById(courseId);
     if (!course) {
       return NextResponse.json(
@@ -28,8 +39,8 @@ export async function POST(request: Request) {
       );
     }
     course.purchasedBy.push(userId);
- //   user.courses.push({courseId});
-    
+    //   user.courses.push({courseId});
+
     await course.save();
     await user.save();
 
@@ -39,7 +50,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.log(error);
-    
+
     return NextResponse.json(
       { message: "Something went wrong", error: error },
       { status: 500 }

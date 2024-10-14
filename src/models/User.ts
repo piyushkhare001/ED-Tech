@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   password: { type: String, required: true },
   role: {
     type: String,
-    enum: ["student", "studentPartner", "admin", "teacher"],
+    enum: ["student", "admin", "teacher"],
     default: "student",
   },
   resetPasswordToken: { type: String },
@@ -42,6 +42,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   otp: { type: String },
   otpExpiresAt: { type: Date },
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
+
   courses: [{
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
     completedContent: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }],
@@ -49,7 +50,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
  
-  }],
+  }]
 });
 
 // Use type assertion to ensure the model has the correct type

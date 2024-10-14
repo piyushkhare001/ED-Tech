@@ -20,13 +20,16 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
+<<<<<<< HEAD
+    "emitter": "^0.0.5",
+=======
     "framer-motion": "^11.11.4",
-    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "next": "14.2.13",
     "next-auth": "^4.24.8",
     "nodemailer": "^6.9.15",
     "otp-generator": "^4.0.1",
+    "phantomjs-prebuilt": "^2.1.16",
     "razorpay": "^2.9.4",
     "react": "^18",
     "react-dom": "^18",
@@ -40,6 +43,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
+    "@types/otp-generator": "^4.0.2",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8",

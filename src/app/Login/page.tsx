@@ -47,6 +47,11 @@ const Signin =  () => {
               </Button>
 
             </form>
+            <p className="mt-4 text-sm text-center">
+              <a href="/ForgetPass" className="text-indigo-600 hover:underline">
+                Forgot password?
+              </a>
+            </p>
             <p className="mt-4 text-xs text-slate-200">
               @2024 All rights reserved
             </p>
