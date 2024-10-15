@@ -5,8 +5,10 @@ export interface IStudentPartner {
   email: string;
   adminApproval: "Approved" | "Rejected" | "Pending";
   coupons: mongoose.Types.ObjectId[];
+  bankDetails: mongoose.Types.ObjectId;
   referals: mongoose.Types.ObjectId[];
   balance: number;
+
 }
 
 const StudentPartnerSchema = new mongoose.Schema<IStudentPartner>({
@@ -20,10 +22,11 @@ const StudentPartnerSchema = new mongoose.Schema<IStudentPartner>({
   balance: { type: Number, default: 0 },
 
   referals: [{ type: mongoose.Schema.Types.ObjectId, ref: "Referals" }],
+  bankDetails: { type: mongoose.Schema.Types.ObjectId, ref : "BankDetails"},
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
 });
 
-// Use type assertion to ensure the model has the correct type
+
 export const StudentPartner: Model<IStudentPartner> =
   (mongoose.models.StudentPartner as Model<IStudentPartner>) ||
   mongoose.model<IStudentPartner>("StudentPartner", StudentPartnerSchema);
