@@ -1,97 +1,85 @@
-// // File: /pages/api/verify-payment.ts
-// import type { NextApiRequest, NextApiResponse } from 'next';
-// //import Razorpay from 'razorpay';
+// import { NextResponse } from 'next/server';
 // import crypto from 'crypto';
+// import dbConnect from "../../../../lib/mognodb"
+// import User from '@/models/User';
+// import {Course} from '../../../../models/Course';
+// import Purchase from '../../../../models/Purchase';
+// import {Coupon} from '../../../..//models/Coupon';
+// import StudentPartner from '../../../../models/StudentPartner';
+// import { notifySuperAdmin } from '../../../utils/notifySuperAdmin';
+// import { getServerSession } from "next-auth/next"; 
+// import { authOptions } from "../../../../lib/auth";
 
-// type Data = {
-//   message?: string;
-//   error?: string;
-// };
 
-// export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-//   if (req.method === 'POST') {
-//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+// export async function POST(req: Request) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     const { order_id, payment_id, signature, courseId, couponCode, amount } = await req.json();
+    
+//     await dbConnect();
 
-//     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-//       return res.status(400).json({ error: 'Missing required fields for verification' });
+  
+//     const userId = session?.user?.id
+//     const buyer = await User.findById(userId);
+    
+//     if (!buyer) {
+//       return NextResponse.json({ success: false, message: "Invalid user" }, { status: 400 });
 //     }
 
-//     try {
-//       // Create HMAC and verify signature
-//       const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET as string);
-//       hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-//       const generatedSignature = hmac.digest('hex');
-
-//       if (generatedSignature === razorpay_signature) {
-//         // Payment verified successfully
-//         return res.status(200).json({ message: 'Payment verified successfully!' });
-//       } else {
-//         // Verification failed
-//         return res.status(400).json({ error: 'Payment verification failed!' });
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       return res.status(500).json({ error: 'Error verifying payment' });
+   
+//     const course = await Course.findById(courseId);
+//     if (!course) {
+//       return NextResponse.json({ success: false, message: "Course not found" }, { status: 404 });
 //     }
-//   } else {
-//     res.setHeader('Allow', ['POST']);
-//     res.status(405).end(`Method ${req.method} Not Allowed`);
+
+ 
+//     const coupon = await Coupon.findOne({ code: couponCode });
+//     if (!coupon) {
+//       return NextResponse.json({ success: false, message: "Invalid coupon code" }, { status: 400 });
+//     }
+
+//     const studentPartner = await StudentPartner.findOne({ couponCode: couponCode });
+//     if (!studentPartner) {
+//       return NextResponse.json({ success: false, message: "Coupon not associated with a student partner" }, { status: 400 });
+//     }
+
+  
+//     const body = order_id + "|" + payment_id;
+//     const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_ID)
+//       .update(body.toString())
+//       .digest('hex');
+
+//     if (expectedSignature !== signature) {
+//       return NextResponse.json({ success: false, message: "Payment verification failed" }, { status: 400 });
+//     }
+
+
+//     if (!buyer.courses.includes(courseId)) {
+//       buyer.courses.push(courseId);
+//       await buyer.save();
+//     }
+
+    
+//     const discountedPrice = amount;  
+//     const newPurchase = await Purchase.create({
+//       buyerId: buyer._id,
+//       courseId: course._id,
+//       studentPartnerId: studentPartner._id,
+//       finalPrice: discountedPrice,
+//       purchaseDate: new Date(),
+//       paymentId: payment_id,
+//     });
+
+
+//      notifySuperAdmin(newPurchase , courseId , studentPartner ,buyer);
+
+//     return NextResponse.json({
+//       success: true,
+//       message: 'Payment verified, course added to user profile.',
+//       enrolledCourses: buyer.courses,
+//     });
+//   } catch (error) {
+//     console.error("Error verifying payment:", error);
+//     return NextResponse.json({ error: "Payment verification failed" }, { status: 500 });
 //   }
 // }
-
-// src/app/api/payment/verify-payment/route.ts
-import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-import connectToDatabase from '@/lib/mognodb'; // Adjust path based on your project structure
-import { ObjectId } from 'mongodb';
-
-export async function POST(req: Request) {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courses, userId }: 
-  { 
-    razorpay_order_id: string; 
-    razorpay_payment_id: string; 
-    razorpay_signature: string; 
-    courses: string[]; 
-    userId: string; 
-  } = await req.json();
-
-  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !courses || !userId) {
-    return NextResponse.json(
-      { success: false, message: "Payment verification failed." },
-      { status: 400 }
-    );
-  }
-
-  // Create the body for signature validation
-  const body = razorpay_order_id + "|" + razorpay_payment_id;
-
-  // Generate expected signature using Razorpay secret key
-  const expectedSignature = crypto
-    .createHmac('sha256', process.env.RAZORPAY_SECRET_ID as string)
-    .update(body.toString())
-    .digest('hex');
-
-  if (expectedSignature === razorpay_signature) {
-    // If payment is verified, connect to the database
-    const { db } : any = await connectToDatabase();
-
-    // Update the user's document, adding the course IDs to their 'courses' array
-    const result = await db.collection('users').updateOne(
-      { _id: new ObjectId(userId) },
-      { $addToSet: { courses: { $each: courses.map(courseId => new ObjectId(courseId)) } } } // Ensure no duplicate courses
-    );
-
-    if (result.modifiedCount === 0) {
-      return NextResponse.json({ success: false, message: "Failed to update user with courses." }, { status: 400 });
-    }
-
-    // Payment verified and courses added successfully
-    return NextResponse.json({ success: true, message: "Payment verified and courses updated." });
-  }
-
-  // If signature doesn't match, payment verification failed
-  return NextResponse.json(
-    { success: false, message: "Payment verification failed." },
-    { status: 400 }
-  );
-}

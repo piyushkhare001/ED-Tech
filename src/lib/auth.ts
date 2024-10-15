@@ -71,7 +71,9 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id; // Add id to token
         token.role = user.role; // Add role to token
       }
-      return token;
+      console.log("Generated JWT Token:", token); // Debugging line
+    return token;
+
     },
     async session({ session, token }) {
       if (session.user) {
