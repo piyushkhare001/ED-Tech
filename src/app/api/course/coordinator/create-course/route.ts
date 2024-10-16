@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Course } from '../../../../../models/Course'; // Adjust the path to your course model
 import connectToDatabase from '../../../../../lib/mognodb'; // Ensure you have the MongoDB connection function
 import User from '../../../../../models/User'; // Assuming you have a User model for role validation
-
+import cloudinary from '../../../../config/cloudinary';
 import { getServerSession } from 'next-auth/next';
 import {authOptions} from "../../../../../lib/auth"
 
@@ -10,7 +10,7 @@ import {authOptions} from "../../../../../lib/auth"
 
 export async function POST(req: NextRequest) {
   try {
-    const { title, imageUrl, description, openToEveryone, price } = await req.json();
+    const { title, thumbnail, description, openToEveryone, price } = await req.json();
     
     // Check for the JWT token in the Authorization header
 
@@ -48,11 +48,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Only teachers can create courses' }, { status: 403 });
     }
 
+    const thumbnailResponse = await cloudinary.uploader.upload(thumbnail, {
+      folder: 'course_thumbnails',
+    });
+
     // Create a new course
     const newCourse = new Course({
       appxCourseId: generateUniqueCourseId(),
       title,
-      imageUrl,
+      thumbnailUrl: thumbnailResponse.secure_url,
       description,
       openToEveryone,
       price,

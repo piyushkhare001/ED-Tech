@@ -2,7 +2,7 @@
 import dbConnect from "../../../../lib/mognodb";
 import StudentPartner from "@/models/StudentPartner";
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next"; // To get session
+import { getServerSession } from "next-auth/next"; 
 import { authOptions } from "../../../../lib/auth";
 import mailSender from "@/lib/utility/mailSender";
 import studentPartnerStatusTemplate from "@/email/templates/studentPatnerTemlate";
