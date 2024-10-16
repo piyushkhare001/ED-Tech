@@ -2,13 +2,15 @@
 import { NextResponse } from 'next/server';
 
 import { instance } from '../../../config/razorpay';
+import mailSender from '@/lib/utility/mailSender';
 
 console.log("Razorpay Key ID:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
 
 
 export async function POST(req: Request) {
   try {
-    const { course }: { course: string[] } = await req.json();
+    // const { course,email }: { course: string[],email: string[] } = await req.json();
+    const { course,email } = await req.json();
     const { amount } = await req.json();
     console.log("Creating order with amount:", amount);
 
@@ -24,6 +26,13 @@ export async function POST(req: Request) {
       currency: 'INR',
       receipt: `receipt_order_${new Date().getTime()}`,
     });
+
+    // await mailSender({
+    //   email:email,
+    //   title:`Order for course price ${amount}/-`,
+    //   body:
+      
+    // })
 
     return NextResponse.json(order);
   } catch (error) {

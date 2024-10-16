@@ -17,6 +17,7 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       role: "teacher", // Setting role as teacher (instructor)
+      
     });
 
     await instructor.save();

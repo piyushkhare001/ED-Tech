@@ -4,6 +4,8 @@ import StudentPartner from "@/models/StudentPartner";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next"; // To get session
 import { authOptions } from "../../../../lib/auth";
+import mailSender from "@/lib/utility/mailSender";
+import studentPartnerStatusTemplate from "@/email/templates/studentPatnerTemlate";
 
 
 
@@ -42,6 +44,13 @@ export async function POST(req: Request) {
 
 
     partnerApplication.adminApproval = adminApproval;
+    
+    await mailSender({
+      email:partnerApplication.email,
+      title:'Student Patner Request',
+      body: studentPartnerStatusTemplate(adminApproval=='Approved'?'approved':'denied')
+    })
+    
     await partnerApplication.save();
 
     return NextResponse.json(
