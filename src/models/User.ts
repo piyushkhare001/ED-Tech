@@ -13,6 +13,7 @@ export interface IUser {
   email: string;
   password: string;
   role: "student" | "studentPartner" | "admin" | "teacher";
+  verified?:boolean;
   appxUserId?: string;
   appxUsername?: string;
   coupons: mongoose.Types.ObjectId[];
@@ -30,6 +31,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "admin", "teacher"],
     default: "student",
   },
+  verified:{type:Boolean,default:undefined},
   resetPasswordToken: { type: String },
   resetPasswordExpiresAt: { type: Date },
   appxUserId: { type: String },

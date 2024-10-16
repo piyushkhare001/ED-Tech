@@ -47,9 +47,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 // UPDATE an instructor by ID
 export async function PATCH(req: Request) {
   try {
-    const { id, name, email } = await req.json();
+    const {id,data} = await req.json();
 
-    const updatedInstructor = await User.findByIdAndUpdate(id, { name, email }, { new: true });
+    const updatedInstructor = await User.findByIdAndUpdate(id, {$set:{...data}});
 
     if (!updatedInstructor) {
       return NextResponse.json({ message: "Instructor not found" }, { status: 404 });
