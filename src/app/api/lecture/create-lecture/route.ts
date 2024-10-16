@@ -1,23 +1,42 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mognodb';
 import { Lecture } from '@/models/Lecture'; 
+import { getServerSession } from "next-auth/next"; // To get session
+import { authOptions } from "../../../../lib/auth";
+import cloudinary from '../../../config/cloudinary';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+  if (req.method === 'POST') {
+  const session = await getServerSession(authOptions);
+
+ 
+  if (!session || session.user.role !== "teacher") {
+    return Response.json(
+      { message: "Unauthorized access" },
+      { status: 403 }
+    ); 
+  }
   await dbConnect(); 
 
   const { title, description, videoUrl, courseId } = req.body;
 
-  if (!title || !description || !videoUrl) {
+  if (!title || !description || !videoUrl || !courseId) {
     return res.status(400).json({ message: 'Missing fields' });
   }
 
+
+  const videoResponse = await cloudinary.uploader.upload(videoUrl, {
+    resource_type: 'video', 
+    folder: 'coursesLecture',
+  });
   try {
  
     const newLecture = await Lecture.create({
       type: 'lecture',
       title,
       description,
-      videoUrl,
+      videoUrl : videoResponse.secure_url,
       courseId,
     });
 
@@ -33,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (error) {
     return res.status(500).json({ message: 'Error storing lecture', error });
   }
+}
 }
 
 
