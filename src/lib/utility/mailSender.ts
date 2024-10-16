@@ -25,10 +25,10 @@ const mailSender = async ({ email, title, body }: MailOptions): Promise<any> => 
     });
 
     console.log(info.response);
-    return info;
+    return {info,sent:false};
   } catch (error: any) {
     console.log(error.message);
-    return error.message;
+    return {message:error.message,sent:false};
   }
 };
 

@@ -32,10 +32,10 @@ export default async function handler(
 
       const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${resetToken}`;
 
-      await mailSender(
-        user.email,
-        "Password Reset Request",
-        passwordResetTemplate(resetLink)
+      await mailSender({
+        email:user.email,
+        title:"Password Reset Request",
+        body:passwordResetTemplate(resetLink)}
       );
 
       res.status(200).json({ message: "Password reset link sent to email" });

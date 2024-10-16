@@ -33,10 +33,10 @@ async function sendVerificationEmail(
 ): Promise<void> {
   try {
     const template = otpTemplate(otp);
-    const mailResponse = await mailSender(
-      email,
-      "Verification email from Desizn Ideaz",
-      template
+    const mailResponse = await mailSender({
+      email:email,
+      title:"Verification email from Desizn Ideaz",
+      body:template}
     );
     console.log("Email sent Successfully", mailResponse);
   } catch (error) {
