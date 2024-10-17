@@ -1,13 +1,12 @@
 import {Course} from "../../../../models/Course"; // Your Course model
 import connectToMongoDB from '@/lib/mognodb';
-import { NextResponse } from "next/server";
+import { NextResponse,NextRequest } from "next/server";
 import { getServerSession } from "next-auth/next"; // To get session
 import { authOptions } from "../../../../lib/auth";
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   // Get the session from NextAuth
   const session = await getServerSession(authOptions);
-
   // Check if the user is authenticated and has the "teacher" role
   if (!session || session.user.role !== "teacher") {
     return NextResponse.json(
@@ -19,12 +18,12 @@ export async function POST(request: Request) {
   await connectToMongoDB();
 
   try {
-    const contentData = await request.json();
+    const contentData = await req.json();
+    const content = await Course.findByIdAndUpdate(contentData._id,{$set:{content:contentData.data}})
+    // const newContent = new Course(contentData);
+    // await newContent.save();
 
-    const newContent = new Course(contentData);
-    await newContent.save();
-
-    return NextResponse.json(newContent, { status: 201 });
+    return NextResponse.json(content, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal server error.", error },
