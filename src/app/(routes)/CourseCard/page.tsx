@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import React from 'react';
 import Tilt from "react-parallax-tilt";
-import certifiedcourseimg from "../../assets/certification.jpg";
+import certifiedcourseimg from "../../../assets/certification.jpg";
 import { FaFile, FaStar } from 'react-icons/fa';
 import { FaUserGroup } from 'react-icons/fa6';
 

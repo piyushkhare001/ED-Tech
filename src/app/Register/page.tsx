@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import React, { useState } from "react";
 import { Button } from "src/components/ui/button";
-import signupimg from "src/assets/signupimg.webp"
+import signupimg from "../../assets/signupimg.webp"
 import Image from "next/image";
 
 const Signup = () => {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import nextjscourse from "../../assets/nextjscourse.png"
+import nextjscourse from "../../../assets/nextjscourse.png"
 
 const CourseBuy = () => {
   return (
