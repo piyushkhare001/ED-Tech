@@ -3,7 +3,10 @@
   "rules": {
     // Todo: investigate, for each of these rules, whether we want them.
     
-
+    
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-page-custom-font": "off",
+    
  
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-ts-comment": "off",
