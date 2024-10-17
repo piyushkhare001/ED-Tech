@@ -3,7 +3,7 @@ import Image from "next/image";
 import logo from "../../assets/logo.jpeg";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 
 interface Props {
   openNav: () => void;

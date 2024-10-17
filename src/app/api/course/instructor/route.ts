@@ -5,12 +5,13 @@ import { Types } from 'mongoose';
 
 
 // Handle GET requests
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     await connectToMongoDB();
     const courses = await Course.find().populate('content purchasedBy createdBy');
     return NextResponse.json(courses, { status: 200 });
-  } catch (error) {
+  } catch (error : any) {
+    console.log(error)
     return NextResponse.json({ error: 'Failed to fetch courses' }, { status: 500 });
   }
 }
@@ -23,7 +24,8 @@ export async function POST(req: NextRequest) {
     const course = new Course(body);
     await course.save();
     return NextResponse.json(course, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error)
     return NextResponse.json({ error: 'Failed to create course' }, { status: 500 });
   }
 }

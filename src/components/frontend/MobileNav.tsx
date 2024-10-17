@@ -1,7 +1,7 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import React from 'react';
-import Link from "next/link";
+//mport Link from "next/link";
 
 
 

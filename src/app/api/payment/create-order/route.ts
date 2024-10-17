@@ -27,12 +27,12 @@ export async function POST(req: Request) {
       receipt: `receipt_order_${new Date().getTime()}`,
     });
 
-    // await mailSender({
-    //   email:email,
-    //   title:`Order for course price ${amount}/-`,
-    //   body:
+    await mailSender({
+      email:email,
+      title:`Order for course price ${amount}/-`,
+      body: `payment sucessfull`
       
-    // })
+    })
 
     return NextResponse.json(order);
   } catch (error) {

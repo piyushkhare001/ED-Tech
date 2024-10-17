@@ -7,7 +7,7 @@ import {Types} from 'mongoose'
 
 
 
-export async function GET(request: Request) {
+export async function GET() {
     await connectToMongoDB();
   const session = await getServerSession(authOptions);
 
@@ -79,6 +79,12 @@ export async function DELETE(request: Request) {
   try {
     // Assuming `deleteUser` is a function to delete the user from MongoDB
     const result = await User.deleteOne({ _id: new Types.ObjectId(userId) })
+    if (result){
+      return NextResponse.json(
+        { message: "delete user"},
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
   } catch (error) {
