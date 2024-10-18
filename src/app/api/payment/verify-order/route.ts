@@ -1,92 +1,79 @@
-import { NextResponse } from 'next/server';
-import crypto from 'crypto';
+
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import dbConnect from "../../../../lib/mognodb"
-import User from '@/models/User';
-import {Course} from '../../../../models/Course';
-import Purchase from '../../../../models/Purchase';
-import {Coupon} from '../../../..//models/Coupon';
-import StudentPartner from '../../../../models/StudentPartner';
-import { notifySuperAdmin } from '../../../utils/notifySuperAdmin';
-import { getServerSession } from "next-auth/next"; 
+import User from "@/models/User";
+import { Course } from "../../../../models/Course";
+//import Purchase from "../../../../models/Purchase";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../lib/auth";
-import mailSender from '@/lib/utility/mailSender';
-import paymentCompletedReceiptTemplate from '@/email/templates/paymentCompletedTemplate';
+// import mailSender from '@/lib/utility/mailSender';
+// import paymentCompletedReceiptTemplate from '@/email/templates/paymentCompletedTemplate';
 
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    const { order_id, payment_id, signature, courseId, couponCode, amount } = await req.json();
-    
     await dbConnect();
 
-  
-    const userId = session?.user?.id
-    const buyer = await User.findById(userId);
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
+    }
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId, amount } = await req.json();
     
-    if (!buyer) {
-      return NextResponse.json({ success: false, message: "Invalid user" }, { status: 400 });
-    }
-
-   
+    const userId = session.user.id;
+    const buyer = await User.findById(userId);
     const course = await Course.findById(courseId);
-    if (!course) {
-      return NextResponse.json({ success: false, message: "Course not found" }, { status: 404 });
+   console.log(amount)
+    if (!buyer || !course) {
+      return NextResponse.json({ success: false, message: "User or Course not found" }, { status: 404 });
     }
 
- 
-    const coupon = await Coupon.findOne({ code: couponCode });
-    if (!coupon) {
-      return NextResponse.json({ success: false, message: "Invalid coupon code" }, { status: 400 });
-    }
-
-    const studentPartner = await StudentPartner.findOne({ couponCode: couponCode });
-    if (!studentPartner) {
-      return NextResponse.json({ success: false, message: "Coupon not associated with a student partner" }, { status: 400 });
-    }
-
-  
-    const body = order_id + "|" + payment_id;
-    const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_ID)
+    // Verify payment signature
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_ID || 'fallbackSecret')
       .update(body.toString())
       .digest('hex');
 
-    if (expectedSignature !== signature) {
+    if (expectedSignature !== razorpay_signature) {
       return NextResponse.json({ success: false, message: "Payment verification failed" }, { status: 400 });
     }
 
-
-    if (!buyer.courses.includes(courseId)) {
-      buyer.courses.push(courseId);
+    // Check if the user already enrolled in the course
+    if (!buyer.courses.some(c => c.courseId.toString() === courseId)) {
+      buyer.courses.push({
+        courseId: courseId,
+        completedContent: [], // Initialize as empty or provide any initial content
+        progressPercentage: 0, // Initialize to 0 or your desired value
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
       await buyer.save();
     }
-
     
-    const discountedPrice = amount;  
-    const newPurchase = await Purchase.create({
-      buyerId: buyer._id,
-      courseId: course._id,
-      studentPartnerId: studentPartner._id,
-      finalPrice: discountedPrice,
-      purchaseDate: new Date(),
-      paymentId: payment_id,
-    });
+    // Record the purchase
+//     const newPurchase = await Purchase.create({
+//       buyerId: buyer._id,
+//       courseId: course._id,
+//       purchaseDate: new Date(),
+//       paymentId: razorpay_payment_id,
+//       // studentPartnerId : "piyush671",
+//       finalPrice: amount
 
-    await mailSender({
-        email:buyer.email,
-        title:`Payment successfull`,
-        body:paymentCompletedReceiptTemplate(course.title,amount,payment_id,new Date().toISOString())
-    })
 
-     notifySuperAdmin(newPurchase , courseId , studentPartner ,buyer);
+//     });
+//  console.log(newPurchase)
+    // Send email receipt
+    // await mailSender({
+    //   email: buyer.email,
+    //   title: `Payment Successful`,
+    //   body: paymentCompletedReceiptTemplate(course.title, amount, razorpay_payment_id, new Date().toISOString())
+    // });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Payment verified, course added to user profile.',
-      enrolledCourses: buyer.courses,
-    });
-  } catch (error) {
+    return NextResponse.json({ success: true, message: 'Payment verified, course added to user profile.', enrolledCourses: buyer.courses });
+
+  } catch (error :any) {
     console.error("Error verifying payment:", error);
-    return NextResponse.json({ error: "Payment verification failed" }, { status: 500 });
+    return NextResponse.json({ error: "Payment verification failed", details: error.message }, { status: 500 });
   }
 }

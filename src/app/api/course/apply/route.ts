@@ -9,17 +9,16 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    // Check if the user is authenticated and has the "teacher" role
     if (!session || session.user.role !== "student") {
       return NextResponse.json(
         { message: "Unauthorized access" },
         { status: 403 }
-      ); // Respond with 403 Forbidden if not a teacher
+      ); 
     }
     await connectToMongoDB();
 
     const { courseId, userId } = await request.json();
-    const course = await Course.findById(courseId);
+    const course = await Course.findOne({ courseId }); 
     if (!course) {
       return NextResponse.json(
         { message: "Course not found" },
@@ -39,7 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
     course.purchasedBy.push(userId);
-    //   user.courses.push({courseId});
+     user.courses.push(courseId);
 
     await course.save();
     await user.save();

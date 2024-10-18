@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useSession, signIn } from 'next-auth/react';
 import { useEffect } from 'react';
 import { Button } from "src/components/ui/button";
+import RazorpayButton from "src/components/frontend/TestingPaymentPage";
+
+
 
 export default function DashboardPage() {
 
@@ -15,10 +18,10 @@ export default function DashboardPage() {
 const router = useRouter()
     const { data: session, status } = useSession();
  // Retrieve JWT from localStorage (or from another authentication context)
-
+ const userId :any = session?.user?.id;
 
 console.log("session" , session)
-
+   
 
   const handleLogout = async () => {
     const confirmation = confirm("Are you sure you want to log out?");
@@ -60,6 +63,7 @@ console.log("session" , session)
 
  <Button  className="bg-red-700" onClick={handleLogout}>Log Out</Button>
 </div>
+<RazorpayButton amount={1}  userId={userId}  />
                 
             </div>
         );

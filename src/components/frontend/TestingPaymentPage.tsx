@@ -1,10 +1,18 @@
-import { useEffect } from 'react';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 interface RazorpayButtonProps {
   amount: number;
 }
+interface RazorpayButtonProps {
+  amount: number;
+  userId: string | undefined;
 
-const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
+}
+
+const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount, userId }) => {
+
+  const router = useRouter()
   useEffect(() => {
     // Dynamically load the Razorpay SDK
     const script = document.createElement('script');
@@ -16,6 +24,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
       document.body.removeChild(script);
     };
   }, []);
+  const courseId = "670bdc7781def95e58eb0fa7";
 
   const handlePayment = async () => {
     // Fetch the order from your API
@@ -24,7 +33,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ amount }), // Pass the amount to the API
+      body: JSON.stringify({ amount , courseId}), // Pass the amount to the API
     });
   
     // Check if the response is OK
@@ -66,7 +75,10 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            courses: [] // Add the courses or relevant data here
+            courses: [], 
+             courseId : courseId,
+userId : userId
+            // Add the courses or relevant data here
           }),
         });
 
@@ -80,9 +92,11 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
         const verifyData = await verifyResponse.json();
         if (verifyData.success) {
           alert('Payment successful and verified!');
+          router.push('/ok')
         } else {
           alert('Payment verification failed. Please check your payment status.');
         }
+
       },
       prefill: {
         name: 'John Doe',
@@ -91,10 +105,14 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ amount }) => {
       theme: {
         color: '#3399cc',
       },
+      
     };
-  
+
+    
     const rzp = new window.Razorpay(options);
     rzp.open();
+
+  
   };
 
   return (
