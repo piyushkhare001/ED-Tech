@@ -19,6 +19,7 @@ export interface IUser {
   verified?: boolean;
   appxUserId?: string;
   appxUsername?: string;
+  collegeName: string;
   coupons: mongoose.Types.ObjectId[];
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
@@ -40,7 +41,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   resetPasswordExpiresAt: { type: Date },
   appxUserId: { type: String },
   appxUsername: { type: String },
-
+  collegeName: { type: String },
   otp: { type: String },
   otpExpiresAt: { type: Date },
   coupons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
