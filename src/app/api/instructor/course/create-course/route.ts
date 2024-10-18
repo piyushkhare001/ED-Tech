@@ -5,18 +5,19 @@ import User from "../../../../../models/User"; // Assuming you have a User model
 import cloudinary from "../../../../config/cloudinary";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";
+import { Readable } from 'stream'; // Import the Readable stream
+
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const title = formData.get("title");
-    const thumbnail = formData.get("thumbnail") as File;
+    const thumbnail = formData.get("thumbnail"); // This should be a File object
     const description = formData.get("description");
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");
 
-    // Check for the JWT token in the Authorization header
-
+    // Get session
     const session = await getServerSession(authOptions);
     console.log(session);
 
@@ -27,14 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify the JWT token
-    // const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-    // if (!decodedToken) {
-    //   return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
-    // }
-
-    // Extract user email from the decoded token
+    // Extract user email from session
     const userEmail = session?.user?.email;
     if (!userEmail) {
       return NextResponse.json(
@@ -60,20 +54,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const thumbnailResponse = await cloudinary.uploader.upload(thumbnail, {
-      folder: "course_thumbnails",
-    });
+    // Check if thumbnail exists
+    if (!thumbnail || typeof thumbnail === 'string') {
+      return NextResponse.json({ error: "No thumbnail uploaded" }, { status: 400 });
+    }
 
+    // Convert the File to a Readable stream
+    const stream = Readable.from(thumbnail.stream());
+
+    // Upload thumbnail to Cloudinary using a Promise-based approach
+    const uploadThumbnail = async (stream: Readable) => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "course_thumbnails" },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading thumbnail to Cloudinary:", error);
+              return reject(error);
+            }
+            return resolve(result);
+          }
+        );
+        stream.pipe(uploadStream);
+      });
+    };
+
+    const thumbnailResponse = await uploadThumbnail(stream);
+    
     // Create a new course
     const newCourse = new Course({
       appxCourseId: generateUniqueCourseId(),
       title,
-      thumbnailUrl: thumbnailResponse.secure_url,
+      imageUrl: (thumbnailResponse as { secure_url: string }).secure_url, // Make sure to wait for this response to get the URL
       description,
       openToEveryone: Boolean(openToEveryone),
       price,
       createdBy: user._id,
       certIssued: false,
+      
     });
 
     // Save the course to the database
@@ -85,6 +103,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error("Server Error:", error);
     if (error.name === "TokenExpiredError") {
       return NextResponse.json(
         { error: "Unauthorized: Token expired" },
@@ -96,7 +115,6 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     } else {
-      console.error("Server Error:", error);
       return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
   }

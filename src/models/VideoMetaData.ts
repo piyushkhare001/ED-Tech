@@ -21,7 +21,6 @@ export interface IVideoMetadata {
 }
 
 const VideoMetadataSchema = new mongoose.Schema<IVideoMetadata>({
-  contentId: { type: mongoose.Schema.Types.ObjectId, ref: "Content" },
   video_1080p_mp4: [String],
   video_720p_mp4: [String],
   video_360p_mp4: [String],
