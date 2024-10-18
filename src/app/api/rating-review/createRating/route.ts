@@ -25,7 +25,15 @@ export const createRating = async (
     }
 
     const userId = req.user.id;
-    const { rating, review, courseId }: { rating: number; review: string; courseId: mongoose.Schema.Types.ObjectId } = req.body;
+    const {
+      rating,
+      review,
+      courseId,
+    }: {
+      rating: number;
+      review: string;
+      courseId: mongoose.Schema.Types.ObjectId;
+    } = req.body;
 
     // Check if the user is enrolled in the course
     const courseDetails = await Course.findOne({
@@ -74,7 +82,7 @@ export const createRating = async (
       message: "Rating and review created successfully",
       ratingReview,
     });
-  } catch (error :any) {
+  } catch (error: any) {
     console.error(error);
     return res.status(500).json({
       success: false,

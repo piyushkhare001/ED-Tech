@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import nextjscourse from "../../../assets/nextjscourse.png"
+import nextjscourse from "@/assets/nextjscourse.png";
 
 const CourseBuy = () => {
   return (
@@ -22,7 +22,9 @@ const CourseBuy = () => {
           </div>
 
           <p className="text-gray-400">Created By ABCD</p>
-          <p className="text-gray-400">Created at October 08, 2024 | 10:00 AM | English</p>
+          <p className="text-gray-400">
+            Created at October 08, 2024 | 10:00 AM | English
+          </p>
         </div>
 
         <div className="my-8">
