@@ -20,7 +20,8 @@ const CourseSchema = new mongoose.Schema<ICourse>({
   imageUrl: String,
   description: String,
   openToEveryone: { type: Boolean, default: false },
-  slug: { type: String, unique: true },
+  // slug: { type: String, unique: true },
+  slug: { type: String},
   price: { type: Number, required: true },
   content: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lecture" }], // Reference to Lecture
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

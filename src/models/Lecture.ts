@@ -1,31 +1,31 @@
 import mongoose, { Model } from "mongoose";
+
 export interface Ilecture {
   type: string;
   title: string;
   hidden: boolean;
   description?: string;
   thumbnail?: string;
-  parentId?: mongoose.Types.ObjectId;
+  parentId?: mongoose.Types.ObjectId | null; // Allow null if parentId is not set
   children: mongoose.Types.ObjectId[];
-  courses: mongoose.Types.ObjectId[];
   createdAt: Date;
-  videoMetadata?: mongoose.Types.ObjectId;
-  commentsCount: number;
+  video?: string;
+  // comments: mongoose.Types.ObjectId[];
 }
 
 const LectureSchema = new mongoose.Schema<Ilecture>({
   type: { type: String, default: "folder" },
-  title: String,
+  title: { type: String, required: true }, // Mark title as required
   hidden: { type: Boolean, default: false },
-  description: String,
-  thumbnail: String,
-  parentId: { type: mongoose.Schema.Types.ObjectId, ref: "Content" },
-  children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }],
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  description: { type: String },
+  thumbnail: { type: String },
+  parentId: { type: mongoose.Schema.Types.ObjectId, ref: "Lecture", default: null },
+  children: { type: [mongoose.Schema.Types.ObjectId], ref: "Lecture", default: [] }, // Default to empty array
   createdAt: { type: Date, default: Date.now },
-  videoMetadata: { type: mongoose.Schema.Types.ObjectId, ref: "VideoMetadata" },
-  commentsCount: { type: Number, default: 0 },
+  video: { type: String},
+  // comments: { type: [mongoose.Schema.Types.ObjectId], ref: "Comment", default: [] } // Default to empty array
 });
 
+// Correct model name to 'Lecture'
 export const Lecture: Model<Ilecture> =
-  mongoose.models.Lecture || mongoose.model<Ilecture>("Content", LectureSchema);
+  mongoose.models.Lecture || mongoose.model<Ilecture>("Lecture", LectureSchema);
