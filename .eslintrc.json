@@ -4,32 +4,33 @@
     // Todo: investigate, for each of these rules, whether we want them.
     
 
- "react/no-unescaped-entities": "off" ,
-    "@next/next/no-page-custom-font": "off",
+ 
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-tslint-comment": "off",
-    "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/class-literal-property-style": "off",
-    "@typescript-eslint/consistent-generic-constructors": "off",
-    "@typescript-eslint/consistent-indexed-object-style": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
-    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-shadow": "warn", // Prevents variable shadowing which can lead to bugs
+
+    // Potentially useful rules but not too strict
+    "@typescript-eslint/no-explicit-any": "warn", // Warns when `any` type is used, but doesn't block
+    "@typescript-eslint/no-empty-function": "warn", // Warns about empty functions that could be a mistake
+    "@typescript-eslint/no-inferrable-types": "warn", // Prevents unnecessary type declarations
+
+    // Optional rules that can stay disabled
+    "@typescript-eslint/consistent-indexed-object-style": "off",
     "@typescript-eslint/no-namespace": "off",
-    "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/no-empty-interface": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/prefer-for-of": "off",
     "@typescript-eslint/prefer-function-type": "off",
     "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/triple-slash-reference": "off",
-    "no-var": "off",
-    "prefer-const": "off",
+
+    // JavaScript-specific rules that can remain disabled
+    "no-var": "warn", // Suggests using `let` or `const` instead of `var`
+    "prefer-const": "warn", // Encourages usage of `const` for variables that are not reassigned
     "prefer-rest-params": "off",
     "prefer-spread": "off"
   }
 }
-
-

@@ -1,4 +1,5 @@
 import mongoose, { Model } from "mongoose";
+
 export interface ICourse {
   appxCourseId: string;
   title: string;
@@ -6,26 +7,26 @@ export interface ICourse {
   description: string;
   openToEveryone: boolean;
   slug: string;
-  price : number,
-  content: mongoose.Types.ObjectId[];
+  price: number;
+  content: mongoose.Types.ObjectId[]; // Connecting to Lecture schema (content represents lectures)
   purchasedBy: mongoose.Types.ObjectId[];
   certIssued: boolean;
   createdBy: mongoose.Types.ObjectId;
 }
 
 const CourseSchema = new mongoose.Schema<ICourse>({
-  appxCourseId: String,
-  title: String,
+  appxCourseId: { type: String, required: true },
+  title: { type: String, required: true },
   imageUrl: String,
   description: String,
   openToEveryone: { type: Boolean, default: false },
-  slug: String,
-  price : Number,
-  content: [{ type: mongoose.Schema.Types.ObjectId, ref: "Content" }],
+  // slug: { type: String, unique: true },
+  slug: { type: String},
+  price: { type: Number, required: true },
+  content: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lecture" }], // Reference to Lecture
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   certIssued: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
- 
 });
 
 export const Course: Model<ICourse> =

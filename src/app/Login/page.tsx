@@ -5,7 +5,7 @@ import { Label } from "@radix-ui/react-label";
 import Image from "next/image";
 import React from "react";
 import { FcGoogle } from 'react-icons/fc';
-import loginimg from 'src/assets/loginimg.jpg';
+import loginimg from '../../assets/loginimg.jpg';
 import { Button } from "src/components/ui/button";
 
 const Signin =  () => {

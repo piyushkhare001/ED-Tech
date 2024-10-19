@@ -4,7 +4,7 @@
 // import path from 'path';
 
 // export async function GET(req: NextRequest) {
-//   const filePath = path.join(process.cwd(), 'src', 'assets', 'cerificate.html');
+//   const filePath = path.join(process.cwd(), 'src', '../../assets', 'cerificate.html');
 
 //   try {
 //     // Read the HTML file content
@@ -25,7 +25,7 @@ import puppeteer from 'puppeteer';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'src/assets/cerificate.html');
+    const filePath = path.join(process.cwd(), 'src/../../assets/cerificate.html');
     let certificateHtml = fs.readFileSync(filePath, 'utf-8');
     certificateHtml = certificateHtml.replace(/ASHISH BARBARIA/g, 'YAHYA SAAD');
     const browser = await puppeteer.launch({
