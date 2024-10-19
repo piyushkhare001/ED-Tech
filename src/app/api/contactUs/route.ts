@@ -1,8 +1,9 @@
 import ContactUsTemplate from "../../../email/templates/ContactUsTemplate";
+import contactNotificationTemplate from "../../../email/templates/contactNotificationTemplate";
 import mailSender from "../../../lib/utility/mailSender";
 import connectToDatabase from "../../../lib/mognodb";
-import ContactUsSchema from "../../../models/ContactUs";
 import { NextRequest, NextResponse } from "next/server";
+import ContactUsModel from "../../../models/ContactUs";
 
 export async function POST(req: NextRequest) {
   const { name, email, message, mobileNo, accountType } = await req.json();
@@ -12,28 +13,29 @@ export async function POST(req: NextRequest) {
   }
 
   const supportEmail: string =
-    process.env.SupportTeam || "piyushkhare671@gmail.com";
+    process.env.SupportTeam || "yahyasaads.magic@gmail.com";
 
-  console.log("mongodb url", process.env.MONGODB_URL);
   try {
     await connectToDatabase();
-    const newRequest = new ContactUsSchema({
+    const newRequest = await ContactUsModel.create({
       name,
       email,
       message,
       accountType,
       mobileNo,
-    });
-    await newRequest.save();
+    })
 
     const mailSentToSupport = await mailSender({
-      email: supportEmail,
-      title: "Contact Us Request",
-      body: ContactUsTemplate(email, name, message, mobileNo, accountType),
+      email: email,
+      title: "Contact Us Request ",
+      body: ContactUsTemplate(name),
     });
-
-    if (mailSentToSupport.sent) {
-
+    const mailSentToSupportTeam = await mailSender({
+      email: supportEmail,
+      title: `Contact Request from ${name}`,
+      body: contactNotificationTemplate( name, email, mobileNo , accountType, message),
+    });
+    if (mailSentToSupport.sent && mailSentToSupportTeam.sent) {
       return NextResponse.json({
         success: true,
         message: "Email sent successfully",
@@ -42,13 +44,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: false,
         message: "Email not received by support team",
-      });
+      },{status:400});
     }
   } catch (error: any) {
     console.log("Error: ", error);
     return NextResponse.json({
       success: false,
       message: "Something went wrong...",
-    });
+    },{status:500});
   }
 }
