@@ -1,8 +1,8 @@
-import Image from "next/image";
-import React from "react";
-import nextjscourse from "../../assets/nextjscourse.png"
+// import Image from "next/image";
+// import React from "react";
+// import nextjscourse from "../../assets/nextjscourse.png"
 
-// const CourseBuy = () => {
+// // const CourseBuy = () => {
 //   return (
 //     <div className="bg-gray-800 text-white min-h-screen flex flex-col items-center">
 //       <div className="w-full max-w-lg p-10">
@@ -21,9 +21,9 @@ import nextjscourse from "../../assets/nextjscourse.png"
 //             <span className="text-gray-400 ml-4">0 students enrolled</span>
 //           </div>
 
-          <p className="text-gray-400">Created By ABCD</p>
-          <p className="text-gray-400">Created at October 08, 2024 | 10:00 AM | English</p>
-        </div>
+        //   <p className="text-gray-400">Created By ABCD</p>
+        //   <p className="text-gray-400">Created at October 08, 2024 | 10:00 AM | English</p>
+        // </div>
 
 //         <div className="my-8">
 //           <p className="text-3xl font-semibold text-center">Rs. 1999</p>
@@ -63,7 +63,7 @@ import nextjscourse from "../../assets/nextjscourse.png"
 //         </div>
 //       </div>
 //     </div>
-//   );
-// };
+// //   );
+// // };
 
-export default CourseBuy;
+// export default CourseBuy;
