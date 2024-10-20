@@ -1,6 +1,6 @@
 const paymentCompletedReceiptTemplate = (
   courseName: string,
-  amount: number,
+
   transactionId: string,
   date: string
 ): string => {
@@ -87,10 +87,7 @@ const paymentCompletedReceiptTemplate = (
               <strong>Course:</strong>
               <span>${courseName}</span>
             </div>
-            <div class="receipt-row">
-              <strong>Amount Paid:</strong>
-              <span>$${amount.toFixed(2)}</span>
-            </div>
+           
             <div class="receipt-row">
               <strong>Transaction ID:</strong>
               <span>${transactionId}</span>

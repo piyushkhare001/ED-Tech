@@ -4,7 +4,7 @@
     // Todo: investigate, for each of these rules, whether we want them.
     
 
- 
+ "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/ban-tslint-comment": "off",
@@ -13,7 +13,7 @@
     "@typescript-eslint/no-shadow": "warn", // Prevents variable shadowing which can lead to bugs
 
     // Potentially useful rules but not too strict
-    "@typescript-eslint/no-explicit-any": "warn", // Warns when `any` type is used, but doesn't block
+// Warns when `any` type is used, but doesn't block
     "@typescript-eslint/no-empty-function": "warn", // Warns about empty functions that could be a mistake
     "@typescript-eslint/no-inferrable-types": "warn", // Prevents unnecessary type declarations
 

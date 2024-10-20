@@ -1,11 +1,30 @@
+
+
 import dbConnect from "../../../../lib/mognodb";
 import StudentPartner from "@/models/StudentPartner";
 import { NextResponse } from "next/server";
 import otpGenerator from "otp-generator";
 import { Coupon } from "@/models/Coupon";
+// import { getServerSession } from "next-auth/next";
+// import { authOptions } from "../../../../lib/auth";
 
-export async function POST(req: Request) {
+export async function POST(req : Request) {
+  // const session = await getServerSession(authOptions);
+
+  // if (!session) {
+  //   return NextResponse.json(
+  //     { success: false, message: "Unauthorized" },
+  //     { status: 403 }
+  //   );
+  // }
+
   try {
+    // if (session?.user?.role !== "student") {
+    //   return NextResponse.json(
+    //     { success: false, message: "Forbidden: Only students can register." },
+    //     { status: 403 }
+    //   );
+    // }
     const { email } = await req.json();
 
     if (!email) {
@@ -17,9 +36,11 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    
+
     await dbConnect();
 
-    //Check if the student is already a student partner
+    // Check if the student is already a student partner
     const existingPartner = await StudentPartner.findOne({ email });
     if (existingPartner) {
       return NextResponse.json(
@@ -31,25 +52,27 @@ export async function POST(req: Request) {
         { status: 409 }
       );
     }
+
     // Generate a unique 10-digit coupon for the partner
     let coupon = otpGenerator.generate(6, {
       upperCaseAlphabets: true,
     });
 
-    // Ensure OTP uniqueness
+    // Ensure coupon uniqueness
     let existingCoupon = await Coupon.findOne({ code: coupon });
     while (existingCoupon) {
       coupon = otpGenerator.generate(6, {
-        upperCaseAlphabets: false,
+        upperCaseAlphabets: true,
         lowerCaseAlphabets: false,
         specialChars: false,
       });
       existingCoupon = await Coupon.findOne({ code: coupon });
     }
-    // Create the new user
+
+    // Create the new Student Partner
     const newPartner = await StudentPartner.create({
       email,
-      adminApproval: false,
+      adminApproval: "pending",
       couponCode: coupon,
     });
 
@@ -63,6 +86,7 @@ export async function POST(req: Request) {
     );
   } catch (error: any) {
     console.error("Error registering Student Partner:", error);
+
     if (error.name === "ValidationError") {
       return NextResponse.json(
         {

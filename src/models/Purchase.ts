@@ -15,7 +15,7 @@ interface IPurchase extends Document {
 const PurchaseSchema = new mongoose.Schema<IPurchase>({
   buyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-studentPartnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'StudentPartner' },
+  studentPartnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'StudentPartner' },
   finalPrice: { type: Number },
   purchaseDate: { type: Date, default: Date.now },
   paymentId: { type: String, required: true },
