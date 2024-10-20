@@ -3,7 +3,7 @@
   "rules": {
     // Todo: investigate, for each of these rules, whether we want them.
     
-
+ "@typescript-eslint/no-empty-object-type": "off",
  "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-ts-comment": "off",

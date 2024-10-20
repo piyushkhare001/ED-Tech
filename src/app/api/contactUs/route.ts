@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       accountType,
       mobileNo,
     })
-
+     console.log(newRequest)
     const mailSentToSupport = await mailSender({
       email: email,
       title: "Contact Us Request ",

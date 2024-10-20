@@ -49,18 +49,19 @@ const Navbar =({openNav}:Props) => {
                     {/*logo and link section*/}
                     <div className="flex items-center">
                         <div className="flex gap-3">
-                            <Image src={logo} alt='Logo' width={72} height={20} className='pt-1 -ml-14 rounded-xl'/>
-                            <h1 className="text-yellow-200 font-semibold text-2xl pt-5 hover:text-yellow-400 tracking-widest sm:text-3xl">DESIZNIDEAZ</h1>
+                            <Image src={logo} alt='Logo' width={72} height={20} className='pt-1 -ml-[100px] rounded-full'/>
+                            <h1 className="text-white font-semibold text-2xl pt-5 hover:text-gray-200 sm:text-3xl">DESIZNIDEAZ</h1>
                         </div>
                     </div>
                     {/*menu items*/}
                     <div className="hidden lg:block pt-3">
-                            <ul className="flex items-center gap-3">
+                            <ul className="flex items-center gap-2">
                                 {
                                     MenuLinks.map((data, index) => (
                                         <li key={index}>
                                             <a href={data.link}
-                                                className="inline-block px-4 font-semibold text-white/90 text-lg hover:text-yellow-100 hover:text-xl"
+                                                className="inline-block px-2 font-lg text-white/90 text-lg hover:text-gray-100 hover:text-xl text-center
+                                                "
                                             > {data.name}</a>
                                         </li>
                                     ))
@@ -68,12 +69,12 @@ const Navbar =({openNav}:Props) => {
                             </ul>
                         </div>
                     {/*navbar right section*/}
-                    <div className="relative group hidden lg:block pt-3 -mr-11 gap-2">
-                        <button className="border-2 w-[110px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black mr-4">Login</button>
-                        <button className="bg-slate-600 w-[125px] h-[45px] rounded-2xl text-lg font-semibold text-yellow-200 hover:bg-gray-200 hover:text-black">SignUp</button>
+                    <div className="relative group hidden lg:block pt-3 -mr-24 gap-2">
+                        <button className="bg-slate-800 border-gray-800 w-[90px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black mr-4">Login</button>
+                        <button className="bg-slate-800 border-gray-800 w-[96px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black">SignUp</button>
                     </div> 
                     <div onClick={openNav} className='flex lg:hidden text-white'>
-                        <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-yellow-200 -mr-12 mt-3'/>
+                        <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-white -mr-12 mt-3'/>
                     </div>                   
                 </motion.div>
                 

@@ -6,7 +6,6 @@ import { useSession, signIn } from 'next-auth/react';
 import { useEffect } from 'react';
 import { Button } from "src/components/ui/button";
 import RazorpayButton from "src/components/frontend/TestingPaymentPage";
-import axios from 'axios';
 
 
 
@@ -37,29 +36,7 @@ console.log("session" , session)
   const createrouter = async() => {
     router.push('/create-course')
   }
-
-  const applyStudentPartner = async () => {
-   
-    try {
-      const response = await axios.post('/api/student-partner/register'); // Change to POST
   
-      if (response.data.success) {
-        console.log(response.data, "applied for partner");
-        router.push('/student-partner'); // Navigate to the student partner page
-      } else {
-        console.log("Error in response:", response.data.message);
-      }
-    } catch (err: any) {
-      // Handle error response from the API
-      if (err.response) {
-        console.error("Error response:", err.response.data);
-        console.log("Status code:", err.response.status);
-        console.log("Error message:", err.response.data.message);
-      } else {
-        console.error("Unexpected error:", err.message);
-      }
-    }
-  };
 
 
     useEffect(() => {
@@ -80,13 +57,7 @@ console.log("session" , session)
  
  <h1>  ` hy {session?.user?.name} you have loged in with {session?.user?.email} and your role is {session?.user?.role} your token is  token will expire on {session?.expires}` </h1>
 
-{
-  session?.user?.role === "student" ? (<>
-   
-  <Button onClick={applyStudentPartner}>Apply for student partner</Button>
-  </>) : (<> you are not teacher you cant apply for student partner </>)
 
-}
 
  <Button onClick={createrouter} className="bg-blue-700"> create course</Button>
 
