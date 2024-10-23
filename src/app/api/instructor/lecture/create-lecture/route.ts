@@ -1,11 +1,9 @@
-import { NextResponse,NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mognodb";
 import { Lecture } from "@/models/Lecture";
 import { Course } from "@/models/Course";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";
-import cloudinary from "../../../../config/cloudinary";
-import { Readable } from "stream";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const session = await getServerSession(authOptions);
@@ -23,74 +21,25 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const title = formData.get("title");
   const description = formData.get("description");
   const courseId = formData.get("courseId");
-  const videoFile = formData.get("videoFile"); // This should be a file object
+  const video = formData.get("video"); // This should be a file object
   const thumbnail = formData.get("thumbnail"); // Assuming thumbnail is optional
-  const parentId = formData.get("parentId"); // Optional parent ID for folder structure
-  const hidden = formData.get("hidden") === "true"; // Optional hidden flag
-  const type = formData.get("type") || "folder"; // Default to 'folder'
+  const hidden = formData.get("status") === "true"; // Optional hidden flag
+  const type = formData.get("type") || "page"; // Default to 'folder'
 
-  if (!title || !description || !courseId) {
+  if (!courseId) {
     return NextResponse.json({ message: "Missing required fields" });
   }
-  // console.log("file", videoFile);
 
   try {
-    // Check if thumbnail exists
-    if (!thumbnail || typeof thumbnail === "string") {
-      return NextResponse.json(
-        { error: "No thumbnail uploaded" },
-        { status: 400 }
-      );
-    }
-
-    const stream = Readable.from(thumbnail.stream());
-    const uploadThumbnail = async (stream: Readable) => {
-      return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "course_thumbnails" },
-          (error, result) => {
-            if (error) {
-              console.error("Error uploading thumbnail to Cloudinary:", error);
-              return reject(error);
-            }
-            return resolve(result);
-          }
-        );
-        stream.pipe(uploadStream);
-      });
-    };
-    const thumbnailResponse = await uploadThumbnail(stream);
-
-    const streamVideo = Readable.from(videoFile.stream());
-    const uploadVideo = async (streamVideo: Readable) => {
-      return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "courses_lecture_videos" ,resource_type:'video'},
-          (error, result) => {
-            if (error) {
-              console.error("Error uploading thumbnail to Cloudinary:", error);
-              return reject(error);
-            }
-            return resolve(result);
-          }
-        );
-        streamVideo.pipe(uploadStream);
-      });
-    };
-    const videoResponse = await uploadVideo(streamVideo);
-console.log((videoResponse as { secure_url: string }).secure_url);
-
     const newLecture = await Lecture.create({
       type,
       title,
       description,
-      thumbnail: (thumbnailResponse as { secure_url: string }).secure_url || null, // Optional thumbnail
-      parentId: parentId || null,
+      thumbnail:thumbnail,
       hidden,
-      video: (videoResponse as { secure_url: string }).secure_url ||null,
+      video: video
     });
 
-    // Update the related course by adding the new lecture
     await Course.findByIdAndUpdate(courseId, {
       $push: { content: newLecture._id },
     });
@@ -98,7 +47,7 @@ console.log((videoResponse as { secure_url: string }).secure_url);
     return NextResponse.json({
       success: true,
       message: "Lecture added successfully",
-      data: newLecture,
+      lecture: newLecture,
     });
   } catch (err) {
     console.error(err);
@@ -165,7 +114,7 @@ console.log((videoResponse as { secure_url: string }).secure_url);
 // }
 // }
 
- // for  frontend reference
+// for  frontend reference
 // import { useState } from 'react';
 // import axios from 'axios';
 
