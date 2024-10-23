@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-gray-800 text-white flex-col p-6  hidden lg:block">
+    <div className="w-64 min-h-screen bg-gray-800 text-white flex-col p-6  hidden lg:block">
       <ul className="space-y-4">
         {navItems.map((item) => (
           <li
