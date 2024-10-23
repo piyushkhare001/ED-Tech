@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import dbConnect from "../../../../../lib/mognodb";
-import User from "../../../../../models/User";
+import dbConnect from "@/lib/mognodb";
+import User from "@/models/User";
 import otpGenerator from "otp-generator";
-import OTP from "../../../../../models/Otp";
-import mailSender from "../../../../../lib/utility/mailSender";
-import emailverificationTemplate from "../../../../../email/templates/emailVerificationTemplate"
-
+import OTP from "@/models/Otp";
+import mailSender from "@/lib/utility/mailSender";
+import emailverificationTemplate from "@/email/templates/emailVerificationTemplate";
 
 export async function POST(req: Request) {
   try {
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
     }
 
     // Generate a unique 6-digit OTP
-    let otp :any = otpGenerator.generate(6, {
+    let otp: any = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
@@ -59,31 +58,30 @@ export async function POST(req: Request) {
     await OTP.create(otpPayload);
 
     console.log("OTP generated and stored:", otpPayload);
- 
-try{
-  const emailResponse = await mailSender({
-    email, // this is the recipient email
-    title: `Your OTP is ${otp}`, // subject of the email
-    body: emailverificationTemplate(otp) // body content, passing the template function with the OTP
-  });
- 
-   if(emailResponse){
-    console.log("email send sucessfully")
-    return NextResponse.json({
-      sucess : true,
-      message : "succesfully sending mail"
-    })
-   }else{
-    console.log("did'nt send email")
-   }
-   
-}catch(error: any){
- console.log(error)
-return NextResponse.json({
-  sucess : false,
-  message : "got error in sending mail"
-})
-}
+
+    try {
+      const emailResponse = await mailSender({
+        email, // this is the recipient email
+        title: `Your OTP is ${otp}`, // subject of the email
+        body: emailverificationTemplate(otp), // body content, passing the template function with the OTP
+      });
+
+      if (emailResponse) {
+        console.log("email send sucessfully");
+        return NextResponse.json({
+          sucess: true,
+          message: "succesfully sending mail",
+        });
+      } else {
+        console.log("did'nt send email");
+      }
+    } catch (error: any) {
+      console.log(error);
+      return NextResponse.json({
+        sucess: false,
+        message: "got error in sending mail",
+      });
+    }
     return NextResponse.json(
       {
         success: true,

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../../Sidebar/page";
-import Alert from "@/components/ui/alert";
+import Alert from "@/components/ui/alertTeacherCourse";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
