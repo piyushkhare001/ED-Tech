@@ -4,11 +4,8 @@ import UserModel from '@/models/User';
 import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
-  const { password, confirmPassword } = await req.json();
+  const { token, password, confirmPassword } = await req.json();
 
-  // Extract token from the URL
-  const { searchParams } = new URL(req.url);
-  const token = searchParams.get('token');
 
   if (!token || !password || !confirmPassword) {
     return NextResponse.json({ error: 'Token, new password, and confirm password are required' }, { status: 400 });
