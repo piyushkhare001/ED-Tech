@@ -1,28 +1,26 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../../Sidebar/page";
 import Alert from "@/components/ui/alertTeacherCourse";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
-import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
 import DocumentEditor from "@/components/ui/documentEditor";
-import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
 import "../../../g.css";
 import Navbar from "@/components/frontend/Navbar";
 import removeHtmlTags from "@/lib/utility/removeHTML";
+
 interface Lecture {
-  type: { type: String };
-  title: { type: String };
-  hidden: { type: Boolean };
-  description: { type: String };
-  thumbnail: { type: String };
-  createdAt: { type: Date };
-  video: { type: String };
-  _id: { type: String };
+  type: string;
+  title: string;
+  hidden: boolean;
+  description: string;
+  thumbnail: string;
+  createdAt:Date;
+  video:string;
+  _id:string;
 }
 
 const AddCourse = () => {
@@ -30,7 +28,6 @@ const AddCourse = () => {
   const [coursePrice, setCoursePrice] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
   const [openToEveryone, setOpenToEveryone] = useState(false);
   const [publish, setPublish] = useState(false);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -318,10 +315,9 @@ const AddCourse = () => {
       const formData = new FormData();
       formData.append("title", title); // Assuming title is a state variable
       formData.append("description", description); // Assuming description is a state variable
-      formData.append("category", category); // Assuming category is a state variable
       formData.append("price", coursePrice); // Assuming coursePrice is a state variable
-      formData.append("openToEveryone", openToEveryone);
-      formData.append("publish", publish);
+      formData.append("openToEveryone", String(openToEveryone));
+      formData.append("publish", String(publish));
       formData.append("lectures", lectures);
       if (status === 1 || status === 2) {
         setButtonLoader({ id: 1, status: true });

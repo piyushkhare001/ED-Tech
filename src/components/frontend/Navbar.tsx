@@ -5,9 +5,7 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 import { motion } from "framer-motion";
 //import { useRouter } from "next/navigation";
 
-interface Props {
-  openNav: () => void;
-}
+
 
 const MenuLinks = [
   {
@@ -38,7 +36,7 @@ const MenuLinks = [
   },
 ];
 
-const Navbar =({openNav}:Props) => {
+const Navbar =() => {
     return <>
         <div className="bg-slate-900 w-[100%] h-[80px] shadow-2xl sticky z-[10000]">
             <div className="">
@@ -73,7 +71,7 @@ const Navbar =({openNav}:Props) => {
                         <button className="bg-slate-800 border-gray-800 w-[90px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black mr-4">Login</button>
                         <button className="bg-slate-800 border-gray-800 w-[96px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black">SignUp</button>
                     </div> 
-                    <div onClick={openNav} className='flex lg:hidden text-white'>
+                    <div  className='flex lg:hidden text-white'>
                         <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-white -mr-12 mt-3'/>
                     </div>                   
                 </motion.div>
