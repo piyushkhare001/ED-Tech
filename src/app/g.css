@@ -2,3 +2,10 @@
 *{
     font-family: "Lexend", serif;
 }
+.ql-syntax{
+    background: #222222;
+    color: white;
+    padding: 4px 10px 4px 10px;
+    border-radius: 4px;
+    box-shadow: 0px 0px -2px 1px black;
+}
