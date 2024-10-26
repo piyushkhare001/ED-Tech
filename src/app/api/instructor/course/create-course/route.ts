@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
 
     // Get session
     const session = await getServerSession(authOptions);
-    console.log(session);
 
     if (!session) {
       return NextResponse.json(
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     // Check if thumbnail exists
     if (!thumbnail || typeof thumbnail === 'string') {
-      return NextResponse.json({ error: "No thumbnail uploaded" }, { status: 400 });
+      return NextResponse.json({ message: "No thumbnail uploaded" }, { status: 400 });
     }
 
     // Convert the File to a Readable stream
@@ -93,7 +92,7 @@ export async function POST(req: NextRequest) {
       certIssued: false,
       
     });
-
+    
     // Save the course to the database
     await newCourse.save();
 
