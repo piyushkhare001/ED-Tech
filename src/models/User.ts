@@ -14,13 +14,14 @@ export interface IUser {
   name?: string;
   email: string;
   password: string;
-  state: string;
-  city: string;
+
+
+
   otp?: string;
   otpExpiresAt?: Date;
   role: "student" | "studentPartner" | "admin" | "teacher";
-  verified?: boolean;
-  collegeName: string;
+ 
+
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
   courses: ICourseProgress[];
@@ -37,7 +38,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "admin", "teacher"],
     default: "student",
   },
-  verified: { type: Boolean, default: undefined },
+
   resetPasswordToken: { type: String },
   resetPasswordExpiresAt: { type: Date },
   otp: { type: String },
@@ -65,3 +66,4 @@ export const User: Model<IUser> =
   mongoose.model<IUser>("User", UserSchema);
 
 export default User;
+//const { name, dateOfBirth, gender, mobile, about , address , collageName} = req.body;
