@@ -1,18 +1,52 @@
 'use client'
-import React from 'react';
+import React  from 'react';
 import Avatar from 'react-avatar';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter  } from 'next/navigation';
+import { useState, useEffect } from 'react';
+interface User {
+ 
+  name: string;
+  email: string;
 
+  about : string;
+  mobile: any;
+  gender : string;
+  collageName : string;
+
+  address : string
+
+}
 
 const ProfileDetails: React.FC = () => {
   const  session  = useSession();
  const router = useRouter()
-
+ const [userData, setUserData] = useState<User | null>(null);
 
  const handelEdit = async() => {
       router.push('/dashboard/setting')
     }
+
+
+    const fetchUserData = async () => {
+      if (session) {
+        try {
+          const res = await fetch(`/api/getUserById/${session?.data?.user?.id}`);
+          if (!res.ok) {
+            console.log('got error at the time of calling api');
+          }
+          const data = await res.json();
+          setUserData(data);
+        } catch (error) {
+           console.log('Failed to fetch user data');
+        }
+      }
+    };
+    
+    useEffect( () => {
+    fetchUserData()
+    }, [session])
+  
 
   return (
     <div className="flex-1 p-10">
@@ -23,7 +57,7 @@ const ProfileDetails: React.FC = () => {
         <div className="flex justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-3xl w-[70rem]">
         <div className="flex items-center">
           <Avatar 
-            name={session?.data?.user?.name || 'Unknown User'} 
+            name={userData?.name|| 'Unknown User'} 
             size="70" 
             round={true} 
             color="#F44336" // Change color if needed
@@ -65,7 +99,7 @@ const ProfileDetails: React.FC = () => {
         <div className="ml-4">
           <h2 className="text-xl font-semibold text-gray-800">About</h2>
           <p className="text-gray-600 mt-1">
-            Write Something About Yourself....
+           {userData?.about || ' Write Something About Yourself....'}
           </p>
         </div>
       </div>
@@ -96,14 +130,15 @@ onClick={handelEdit}
       <div className='flex flex-col pl-4'>
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Personal Details</h2>
       
-    <div className='flex gap-16'>
+    <div className='flex flex-col gap-6 '>
+      <div className='flex gap-16'>
         <div className="flex flex-col gap-2">
           <label htmlFor="phoneNumber" className="text-gray-700">Phone Number</label>
           <input
             type="tel"
             id="phoneNumber"
             className="border rounded px-3 py-2"
-            placeholder="Add Contact Number"
+            placeholder={userData?.mobile || "Add Contact Number"    }
             readOnly
           />
         </div>
@@ -114,10 +149,34 @@ onClick={handelEdit}
             type="tel"
             id="phoneNumber"
             className="border rounded px-3 py-2"
-            placeholder="Add Contact Number"
+            placeholder={userData?.address|| "Add your address"    }    
             readOnly
           />
         </div>
+        </div>
+        { session?.data?.user?.role === "teacher" ? (<></>) :
+      (<div className='flex gap-16'>  <div className="flex flex-col gap-2 ">
+          <label htmlFor="phoneNumber" className="text-gray-700">Gender</label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            className="border rounded px-3 py-2"
+            placeholder={userData?.gender || "Add your gender"    }
+            readOnly
+          />
+        </div>
+        <div className="flex flex-col gap-2 ">
+          <label htmlFor="phoneNumber" className="text-gray-700">Collage Name</label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            className="border rounded px-3 py-2"
+            placeholder={userData?.collageName || "Add your collage name"    }
+            readOnly
+          />
+        </div>
+        </div>)
+        }
     
   </div>
   
