@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const title = formData.get("title");
-    const thumbnail = formData.get("thumbnail"); // This should be a File object
+    const thumbnail :any = formData.get("thumbnail"); // This should be a File object
     const description = formData.get("description");
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");

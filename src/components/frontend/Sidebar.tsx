@@ -17,10 +17,11 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
     await fetch('/api/auth/logout', { method: 'POST' });
     await signOut({ callbackUrl: '/signin' });
     setIsModalOpen(false);
-  };
+  }; 
 
   return (
-    <div className="bg-blue-900 text-white w-60 min-h-screen pl-14 flex flex-col justify-evenly">
+    <div className="bg-blue-900 text-white w-60 h-screen pl-14 flex flex-col justify-evenly  overflow-y-auto">
+
       <div className="flex flex-col">
         <h2 className="text-xl font-sans text-gray-100">👋 Hi, {session?.data?.user?.name}</h2>
         <p className="text-lg text-gray-400">{role}</p>
@@ -39,11 +40,11 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'courses' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
-                onClick={() => setView('courses')}
+                className={`mb-4 cursor-pointer ${currentView === 'Mycourses' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                onClick={() => setView('Mycourses')}
               >
                 <div className="flex items-center space-x-2">
-                  <span>Courses</span>
+                  <span>My Courses</span>
                 </div>
               </li>
               <li

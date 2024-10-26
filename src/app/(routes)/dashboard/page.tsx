@@ -13,6 +13,8 @@ import StudentPartner from '@/components/frontend/StudentPartner';
 import Sidebar from '@/components/frontend/Sidebar';
 import ProfileDetails from '@/components/frontend/ProfileDetails';
 import LoadingPage from '../loading/page';
+import MyCourses from '@/components/frontend/Mycourses';
+import AddCourse from '@/components/frontend/AddCourse';
 //import Navbar from '@/components/frontend/Navbar';
 export default function DashboardPage() {
 
@@ -49,7 +51,9 @@ console.log("session" , session)
         {view === 'enrolledCourse' && <EnrolledCourse />}
         {view === 'purchase' && <Purchase />}
         {view === 'studentPartner' && <StudentPartner />}
-        {view === 'profile' && <ProfileDetails />} {/* Default profile */}
+        {view === 'Mycourses' && <MyCourses/>}
+        {view === 'profile' && <ProfileDetails />} 
+        {view === 'addCourse' && <AddCourse/>}
        </div>
      
     </div>

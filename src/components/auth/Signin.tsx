@@ -47,10 +47,10 @@ export default function SignIn() {
       // Redirect based on role
       switch (formData.role) {
         case "student":
-          router.push("/dashboard/student");
+          router.push("/dashboard");
           break;
         case "studentPartner":
-          router.push("/dashboard/partner");
+          router.push("/dashboard");
           break;
         case "organizationRepresentative":
           router.push("/dashboard/organization");
