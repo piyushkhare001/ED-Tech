@@ -1,32 +1,43 @@
 import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import axios from 'axios';
+
+import { useState } from 'react';
 
 const Purchase = () => {
-  const { data: session } = useSession();
+  const session =  useSession();
 
-  const fetchPurchaseValidUser = async () => {
-    try {
-      const response = await axios.post('/api/getUserPurchase');
+  const [userData, setUserData] = useState(null);
 
-      if (response.status === 200) {
-        // The request was successful
-        console.log('User Data:', response.data);
-      } else {
-        console.error('Failed to fetch user:', response.statusText);
+
+  const fetchUserPurchase = async () => {
+    const userId = await session?.data?.user?.id
+    if (userId) {
+      try {
+        const res = await fetch(`/api/getUserPurchase/${userId}`);
+        if (!res.ok) {
+          console.log('got error at the time of calling api');
+      
+        }
+        const data = await res.json();
+        setUserData(data);
+     
+      } catch (error : any) {
+         console.log('Failed to fetch user data');
+     
       }
-    } catch (error) {
-      console.error('Failed to fetch user:', error);
     }
-  };
-
+  }
+  console.log(userData)
   useEffect(() => {
-    fetchPurchaseValidUser();
-  }, [session]); // Fetch when the session changes
+    if (session) {
+      fetchUserPurchase();
+    }
+  }, []);
 
   return (
     <div>
-      <h1 className='font-serif text-black text-4xl m-8'>Purchase History</h1>
+      <h1 className='font-serif text-black text-4xl m-8'>Purchased Courses</h1>
+      <p>{}</p>
     </div>
   );
 };
