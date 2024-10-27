@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
-
+import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 const sections = [
   {
     id: "basic",
@@ -253,6 +252,7 @@ const StudentPartnerForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // Your existing useEffect and handlers remain the same
   useEffect(() => {
     localStorage.setItem("studentPartnerForm", JSON.stringify(formData));
     localStorage.setItem("currentSection", currentSection.toString());
@@ -280,7 +280,7 @@ const StudentPartnerForm = () => {
   const handleNext = () => {
     if (currentSection < sections.length - 1) {
       setCurrentSection((prev) => prev + 1);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       handleSubmit();
     }
@@ -289,14 +289,13 @@ const StudentPartnerForm = () => {
   const handleBack = () => {
     if (currentSection > 0) {
       setCurrentSection((prev) => prev - 1);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setIsSubmitted(true);
       localStorage.removeItem("studentPartnerForm");
@@ -310,19 +309,22 @@ const StudentPartnerForm = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-xl">
-          <CardHeader>
-            <CardTitle className="text-center text-green-600">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
+        <Card className="w-full max-w-xl shadow-lg transform transition-all duration-500 hover:scale-105">
+          <CardHeader className="space-y-6">
+            <div className="flex justify-center">
+              <CheckCircle2 className="w-16 h-16 text-green-500" />
+            </div>
+            <CardTitle className="text-center text-2xl text-green-600">
               Application Submitted Successfully!
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center space-y-4">
-              <AlertDescription>
+              <AlertDescription className="text-lg">
                 Thank you for applying to be a Student Partner at DESIZNIDEAZ!
               </AlertDescription>
-              <AlertDescription>
+              <AlertDescription className="text-gray-600">
                 We will review your application and get back to you via email
                 soon.
               </AlertDescription>
@@ -341,7 +343,7 @@ const StudentPartnerForm = () => {
             id={field.name}
             value={formData[field.name] || ""}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className="min-h-[100px] w-full"
+            className="min-h-[100px] w-full rounded-lg transition-all duration-200 focus:ring-2 focus:ring-green-500"
             required={field.required}
           />
         );
@@ -351,7 +353,7 @@ const StudentPartnerForm = () => {
             value={formData[field.name] || ""}
             onValueChange={(value) => handleInputChange(field.name, value)}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full rounded-lg">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -370,7 +372,7 @@ const StudentPartnerForm = () => {
             type={field.type}
             value={formData[field.name] || ""}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className="w-full"
+            className="w-full rounded-lg transition-all duration-200 focus:ring-2 focus:ring-green-500"
             required={field.required}
           />
         );
@@ -378,28 +380,29 @@ const StudentPartnerForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <Card className="border-t-4 border-t-green-500">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-green-600">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <Card className="shadow-lg border-none">
+          <CardHeader className="space-y-6 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-t-lg">
+            <CardTitle className="text-3xl font-bold text-center">
               Student Partner Registration
             </CardTitle>
-            <div className="mt-4">
-              <Progress value={progress} className="h-2" />
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Section {currentSection + 1} of {sections.length}
+            <div className="space-y-3">
+              <Progress value={progress} className="h-2 bg-white/20" />
+              <p className="text-sm text-white/90 text-center font-medium">
+                Section {currentSection + 1} of {sections.length}:{" "}
+                {sections[currentSection].title}
               </p>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800">
-                {sections[currentSection].title}
-              </h2>
+          <CardContent className="p-8">
+            <div className="space-y-8">
               {sections[currentSection].fields.map((field) => (
                 <div key={field.name} className="space-y-2">
-                  <Label htmlFor={field.name} className="text-sm font-medium">
+                  <Label
+                    htmlFor={field.name}
+                    className="text-sm font-medium flex items-center text-gray-700"
+                  >
                     {field.label}
                     {field.required && (
                       <span className="text-red-500 ml-1">*</span>
@@ -408,25 +411,29 @@ const StudentPartnerForm = () => {
                   {renderField(field)}
                 </div>
               ))}
-              <div className="flex justify-between mt-8">
+              <div className="flex justify-between pt-6">
                 <Button
                   variant="outline"
                   onClick={handleBack}
                   disabled={currentSection === 0}
-                  className="px-6"
+                  className="px-6 flex items-center gap-2 hover:bg-gray-100"
                 >
-                  Back
+                  <ChevronLeft className="w-4 h-4" /> Back
                 </Button>
                 <Button
                   onClick={handleNext}
                   disabled={!isCurrentSectionValid() || isSubmitting}
-                  className="px-6 bg-green-600 hover:bg-green-700"
+                  className="px-6 bg-green-600 hover:bg-green-700 flex items-center gap-2"
                 >
-                  {isSubmitting
-                    ? "Submitting..."
-                    : currentSection === sections.length - 1
-                    ? "Submit"
-                    : "Next"}
+                  {isSubmitting ? (
+                    "Submitting..."
+                  ) : currentSection === sections.length - 1 ? (
+                    "Submit"
+                  ) : (
+                    <>
+                      Next <ChevronRight className="w-4 h-4" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
