@@ -1,85 +1,93 @@
 "use client";
-import Image from "next/image";
+
+import React, { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logo.jpeg";
-import { Bars3Icon } from "@heroicons/react/20/solid";
-import { motion } from "framer-motion";
-//import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useRouter } from 'next/navigation';
+const NavBar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
-
-
-const MenuLinks = [
-  {
-    id: 1,
-    name: "Home",
-    link: "/#",
-  },
-  {
-    id: 2,
-    name: "About",
-    link: "/#about",
-  },
-
-  {
-    id: 3,
-    name: "Courses",
-    link: "/#courses",
-  },
-  {
-    id: 4,
-    name: "Certificate",
-    link: "/#certificate",
-  },
-  {
-    id: 5,
-    name: "Contact",
-    link: "/#contact",
-  },
-];
-
-const Navbar =() => {
-    return <>
-        <div className="bg-slate-900 w-[100%] h-[80px] shadow-2xl sticky z-[10000]">
-            <div className="">
-                <motion.div 
-                initial= {{opacity:0, y:-50}}
-                animate= {{opacity: 1, y: 0}}
-                className="container flex justify-between items-center">
-                    {/*logo and link section*/}
-                    <div className="flex items-center">
-                        <div className="flex gap-3">
-                            <Image src={logo} alt='Logo' width={72} height={20} className='pt-1 -ml-[100px] rounded-full'/>
-                            <h1 className="text-white font-semibold text-2xl pt-5 hover:text-gray-200 sm:text-3xl">DESIZNIDEAZ</h1>
-                        </div>
-                    </div>
-                    {/*menu items*/}
-                    <div className="hidden lg:block pt-3">
-                            <ul className="flex items-center gap-2">
-                                {
-                                    MenuLinks.map((data, index) => (
-                                        <li key={index}>
-                                            <a href={data.link}
-                                                className="inline-block px-2 font-lg text-white/90 text-lg hover:text-gray-100 hover:text-xl text-center
-                                                "
-                                            > {data.name}</a>
-                                        </li>
-                                    ))
-                                }
-                            </ul>
-                        </div>
-                    {/*navbar right section*/}
-                    <div className="relative group hidden lg:block pt-3 -mr-24 gap-2">
-                        <button className="bg-slate-800 border-gray-800 w-[90px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black mr-4">Login</button>
-                        <button className="bg-slate-800 border-gray-800 w-[96px] h-[50px] rounded-lg text-lg font-semibold text-gray-400 hover:bg-gray-400 hover:text-black">SignUp</button>
-                    </div> 
-                    <div  className='flex lg:hidden text-white'>
-                        <Bars3Icon className='w-[3rem] lg:hidden h-[3rem] cursor-pointer text-white -mr-12 mt-3'/>
-                    </div>                   
-                </motion.div>
-                
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+ const router = useRouter()
+  return (
+    <nav className="bg-white shadow-md h-[80px]">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            {/* Logo */}
+            <div className="flex gap-3">
+              <Image src={logo} alt='Logo' width={72} height={20} className="-ml-8"/>
+              <h1 className="text-3xl font-bold text-gray-800 pt-5">Desiznideaz</h1>
             </div>
+    
+          </div>
+
+          {/* Menu Items */}
+          <div className="hidden md:flex space-x-6">
+            <a href="/" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+              Home
+            </a>
+            <a href="/aboutus" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+              About
+            </a>
+            <a href="/courses" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+              Courses
+            </a>
+            <a href="/certificate" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+              Certificate
+            </a>
+            <a href="/contactus" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+              Contact Us
+            </a>
+          </div>
+
+          {/* Login/Register */}
+          <div className="hidden md:flex pt-3 -mr-10">
+              <button onClick={() => {router.push('/signup')}} className=" bg-[#1cb69d] text-white rounded-md w-[160px] h-[55px] font-medium text-xl">
+                  Login/Register
+              </button>
+          </div>
+
+          {/* Mobile Menu Icon */}
+          <div className="md:hidden flex items-center">
+            <button onClick={toggleMenu}>
+              {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+            </button>
+          </div>
         </div>
-      <hr />
-    </>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="md:hidden">
+            <a href="/" className="block py-2 px-4 text-gray-700 hover:bg-gray-100">
+              Home
+            </a>
+            <a href="/about" className="block py-2 px-4 text-gray-700 hover:bg-gray-100">
+              About
+            </a>
+            <a href="/courses" className="block py-2 px-4 text-gray-700 hover:bg-gray-100">
+              Courses
+            </a>
+            <a href="/certificate" className="block py-2 px-4 text-gray-700 hover:bg-gray-100">
+              Certificate
+            </a>
+            <a href="/contact" className="block py-2 px-4 text-gray-700 hover:bg-gray-100">
+              Contact Us
+            </a>
+            <a
+              href="/login"
+              className="block py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Login/Register
+            </a>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
 };
 
-export default Navbar;
+export default NavBar;

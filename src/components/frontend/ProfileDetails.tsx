@@ -2,8 +2,10 @@
 import React  from 'react';
 import Avatar from 'react-avatar';
 import { useSession } from 'next-auth/react';
-import { useRouter  } from 'next/navigation';
+
+
 import { useState, useEffect } from 'react';
+
 interface User {
  
   name: string;
@@ -18,27 +20,38 @@ interface User {
 
 }
 
-const ProfileDetails: React.FC = () => {
+interface SidebarProps {
+  setView: (view: string) => void;
+
+
+}
+
+
+const ProfileDetails:  React.FC<SidebarProps> = ({ setView  }) => {
   const  session  = useSession();
- const router = useRouter()
+
  const [userData, setUserData] = useState<User | null>(null);
 
  const handelEdit = async() => {
-      router.push('/dashboard/setting')
+      setView('settings')
+   
     }
 
 
     const fetchUserData = async () => {
       if (session) {
         try {
-          const res = await fetch(`/api/getUserById/${session?.data?.user?.id}`);
+          const res = await fetch(`/api/getProfileById/${session?.data?.user?.id}`);
           if (!res.ok) {
             console.log('got error at the time of calling api');
+        
           }
           const data = await res.json();
           setUserData(data);
-        } catch (error) {
+       
+        } catch (error : any) {
            console.log('Failed to fetch user data');
+       
         }
       }
     };
@@ -57,7 +70,7 @@ const ProfileDetails: React.FC = () => {
         <div className="flex justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-3xl w-[70rem]">
         <div className="flex items-center">
           <Avatar 
-            name={userData?.name|| 'Unknown User'} 
+            name={userData?.name|| session?.data?.user?.name ||  'Unknown User'} 
             size="70" 
             round={true} 
             color="#F44336" // Change color if needed
