@@ -1,60 +1,60 @@
-import React, { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS for styling
+import React, { useEffect, useRef } from 'react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
 
-// Load react-quill dynamically to prevent SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+interface EditorProps {
+  content: string;
+  setContent: (content: string) => void;
+}
 
-const DocumentEditor = ({ content, setContent }) => {
+const DocumentEditor: React.FC<EditorProps> = ({ content, setContent }) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link,
+    ],
+    content,
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+    },
+  });
 
-  // Custom toolbar configuration
-  const toolbarOptions = [
-    [{ header: [1, 2, 3, false] }], // Heading levels
-    ['bold', 'italic', 'underline', 'strike'], // Text formatting
-    [{ list: 'ordered' }, { list: 'bullet' }], // Lists
-    ['link', 'blockquote', 'code-block'], // Link, Blockquote, Code
-    [{ indent: '-1' }, { indent: '+1' }], // Indentation
-    ['clean'], // Remove formatting
-  ];
-
-  const modules = {
-    toolbar: toolbarOptions,
-  };
-
-  const handleContentChange = (value) => {
-    setContent(value); // Call the setter method from props to update content
-  };
-
-  useEffect(() => {
-    // Any Quill-related manipulations can go here
-  }, []);
+  if (!editor) {
+    return null;
+  }
 
   return (
-    <div className="editor-container rounded">
-      <ReactQuill
-        theme="snow"
-        value={content}
-        onChange={handleContentChange}
-        modules={modules}
-        style={{ height: '300px', marginBottom: '50px' }}
-      />
-
-      <style jsx>{`
-        .editor-container {
-          margin: 0 auto;
-        }
-        .save-button {
-          padding: 10px 20px;
-          background-color: #0070f3;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-        .save-button:hover {
-          background-color: #005bb5;
-        }
-      `}</style>
+    <div>
+      <div className="menu-bar">
+        <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
+          Bold
+        </button>
+        <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>
+          Italic
+        </button>
+        <button onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}>
+          H1
+        </button>
+        <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>
+          H2
+        </button>
+        <button onClick={() => editor.chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'is-active' : ''}>
+          Bullet List
+        </button>
+        <button onClick={() => editor.chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'is-active' : ''}>
+          Ordered List
+        </button>
+        <button onClick={() => {
+          const url = prompt('Enter URL');
+          if (url) {
+            editor.chain().focus().setLink({ href: url }).run();
+          }
+        }}>
+          Link
+        </button>
+      </div>
+      <EditorContent editor={editor} />
     </div>
   );
 };

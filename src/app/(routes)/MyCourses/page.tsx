@@ -2,7 +2,7 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import Sidebar from "../Sidebar/page";
 import Image from "next/image";
-import nextjscourse from "src/assets/nextjscourse.png"
+import nextjscourse from "src/assets/tsximg.jpg"
 import tsximg from "src/assets/tsximg.jpg";
 
 
