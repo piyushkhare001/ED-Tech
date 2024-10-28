@@ -13,22 +13,33 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
       setSuccess(null);
       return;
     }
-
+  
     setIsLoading(true);
     try {
-      // Implement your password reset API call here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated API call
-
-      setError(null);
-      setSuccess("Password reset link has been sent to your email address.");
-      setEmail("");
+      const response = await fetch('api/reset/request-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })  // Pass email as an object
+      }); // Missing ); was here
+  
+      const res = await response.json();
+      if (res.ok) {  // Check if the response was successful
+        setError(null);
+        setSuccess("Password reset link has been sent to your email address.");
+        setEmail("");
+      } else {
+        setError("Failed to send reset link. Please try again.");
+        setSuccess(null);
+      }
     } catch (err) {
       setError("Failed to send reset link. Please try again.");
       setSuccess(null);
@@ -36,6 +47,7 @@ const ForgotPassword = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
