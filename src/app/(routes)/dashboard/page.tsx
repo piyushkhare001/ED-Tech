@@ -9,11 +9,14 @@ import Purchase from "@/components/frontend/Purchase";
 import EnrolledCourse from "@/components/frontend/EnrolledCourse";
 import StudentPartner from "@/components/frontend/StudentPartner";
 //import { Button } from "src/components/ui/button";
-//import RazorpayButton from "src/components/frontend/TestingPaymentPage";
-import Sidebar from "@/components/frontend/Sidebar";
-import ProfileDetails from "@/components/frontend/ProfileDetails";
-import LoadingPage from "../loading/page";
-// import Navbar from '@/components/frontend/Navbar';
+
+import Sidebar from '@/components/frontend/Sidebar';
+import ProfileDetails from '@/components/frontend/ProfileDetails';
+import LoadingPage from '../loading/page';
+import MyCourses from '@/components/frontend/Mycourses';
+import AddCourse from '@/components/frontend/AddCourse';
+//import Navbar from '@/components/frontend/Navbar';
+
 export default function DashboardPage() {
   const [view, setView] = useState("profile");
   const { data: session, status } = useSession();
@@ -25,31 +28,32 @@ export default function DashboardPage() {
     if (status === "unauthenticated") {
       signIn();
     }
-  }, [status]);
 
-  if (status === "loading") {
-    return <LoadingPage />;
-  }
+    if (session) {
+        return (
+            <div>
 
-  if (session) {
-    return (
-      <div>
-        {/* <Navbar  />  */}
-        <div className="flex">
-          <Sidebar setView={setView} currentView={view} />
+              <div className="flex">
+              <Sidebar setView={setView} currentView={view} />
 
-          <div className="flex-grow p-4">
-            {/* Conditionally render components based on 'view' */}
-            {view === "settings" && <Setting />}
-            {view === "enrolledCourse" && <EnrolledCourse />}
-            {view === "purchase" && <Purchase />}
-            {view === "studentPartner" && <StudentPartner />}
-            {view === "profile" && <ProfileDetails />} {/* Default profile */}
-          </div>
-        </div>
-      </div>
-    );
-  }
+              <div className="flex-grow p-4">
+        {/* Conditionally render components based on 'view' */}
+        {view === 'settings' && <Setting />}
+        {view === 'enrolledCourse' && <EnrolledCourse />}
+        {view === 'purchase' && <Purchase />}
+        {view === 'studentPartner' && <StudentPartner />}
+        {view === 'Mycourses' && <MyCourses/>}
+        {view === 'profile' && <ProfileDetails setView={setView}/>} 
+        {view === 'addCourse' && <AddCourse/>}
+       </div>
+     
+    </div>
 
-  return null;
+                
+            </div>
+        );
+    }
+
+    return null;
+
 }
