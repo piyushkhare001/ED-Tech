@@ -51,7 +51,7 @@ console.log("session" , session)
         {view === 'studentPartner' && <StudentPartner />}
         {view === 'Mycourses' && <MyCourses/>}
         {view === 'profile' && <ProfileDetails setView={setView}/>} 
-        {view === 'addCourse' && <AddCourse/>}
+        {view === 'addCourse' && <Course/>}
        </div>
      
     </div>
