@@ -24,6 +24,7 @@ const CoursesPage = () => {
       try {
         const response = await fetch('/api/course/fetch');
         const data = await response.json();
+        console.log(data)
         if (data.success) {
           setCourses(data.data);
         } else {
@@ -44,7 +45,10 @@ const CoursesPage = () => {
   return (
     <>
     <NavBar/>
+
     <div className="p-6 bg-gray-100 min-h-screen">
+        
+ 
         
     <h1 className="text-3xl font-bold mb-6 text-center">Available Courses</h1>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -97,7 +101,7 @@ const CoursesPage = () => {
     </div>
 
   </div>
-  <Footer/>
+      <Footer/>
   </>
   );
 };

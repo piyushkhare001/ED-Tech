@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
 //import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
-import DocumentEditor from "@/components/ui/documentEditor";
+// import DocumentEditor from "@/components/ui/documentEditor";
 //import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
@@ -938,10 +938,10 @@ const AddCourse = () => {
                       Lecture Description{" "}
                       <span className="text-red-500"> *</span>
                     </label>
-                    <DocumentEditor
+                    {/* <DocumentEditor
                       content={lDescription}
                       setContent={setlDescription}
-                    />
+                    /> */}
                   </div>
                   {/* Lecture check box*/}
                   <div className="w-1/2">

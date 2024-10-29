@@ -9,10 +9,10 @@ export async function GET() {
   try {
     const courses = await Course.find({});
     return NextResponse.json({ success: true, data: courses });
-  } catch (error) {
+  } catch (error : any) {
     return NextResponse.json(
-      { success: false, message: 'Error fetching courses', error },
+      { success: false, message: 'Error fetching courses', error: error.message },
       { status: 500 }
-    );
+    )
   }
 }
