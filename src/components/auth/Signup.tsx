@@ -1,190 +1,330 @@
 "use client";
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 export default function SignUp() {
   const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
-  const [role, setRole] = useState("student");
   const [error, setError] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const router = useRouter();
 
+  const validatePassword = (pass: string) => {
+    const hasLength = pass.length >= 8 && pass.length <= 15;
+    const hasLowerUpper = /(?=.*[a-z])(?=.*[A-Z])/.test(pass);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+    return hasLength && hasLowerUpper && hasSpecial;
+  };
+
   const handleSendOtp = async () => {
+    if (
+      !email ||
+      !validatePassword(password) ||
+      !name ||
+      !phone ||
+      !termsAccepted
+    ) {
+      setError("Please fill all fields correctly and accept terms.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/signup/send-otp", {
+      const response = await fetch("api/auth/signup/send-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email }),
       });
 
-      if (response.ok) {
-        setOtpSent(true);
+      const data = await response.json();
+
+      if (data) {
+        setShowOtpDialog(true);
+        setError("");
       } else {
-        const data = await response.json();
-        setError(data.message || "Failed to send OTP.");
+        setError(data.message || "Failed to send OTP");
       }
-    } catch (error) {
-      console.error(error);
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      console.log(err);
+      setError("Failed to send OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!otp) {
+      setError("Please enter the OTP");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("api/auth/signup/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, otp }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          name,
+          password,
+          role,
+          mobile: phone,
+          otp,
+        }),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (data.success) {
         router.push("/signin");
       } else {
-        const data = await response.json();
-        setError(data.message || "An error occurred during sign up.");
+        setError(data.message || "Sign up failed");
       }
-    } catch (error) {
-      console.error(error);
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      setError("Sign up failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+    <div className="min-h-screen bg-gray-200/80 ">
+      <div className="mx-auto max-w-[1200px] p-4 h-auto flex items-center ">
+        <div className="w-full flex shadow-lg rounded-lg overflow-hidden bg-white">
+          <div className="hidden sm:flex bg-emerald-500 p-12 relative">
+            <div className="text-white text-4xl font-medium max-w-md mt-24">
+              Discover world best online courses here. 24k online course is
+              waiting for you
+            </div>
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+              <Image
+                src="/images/authBanner.png"
+                alt="Student studying"
+                width={300}
+                height={300}
+                priority
+                className="mx-auto z-10 h-auto w-auto"
               />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <div className="flex-grow">
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id="email-address"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <button
-                type="button"
-                className="px-3 py-2 bg-blue-500 text-white rounded-md"
-                onClick={handleSendOtp}
-              >
-                Send OTP
-              </button>
+          <div className="flex-1 p-12 bg-white">
+            <div className="max-w-md mx-auto">
+              <h1 className="text-3xl font-bold mb-2">Create an Account</h1>
+              <p className="mb-8">
+                Already have an account?{" "}
+                <button
+                  onClick={() => router.push("/signin")}
+                  className="text-emerald-500 hover:underline"
+                >
+                  Sign In
+                </button>
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="block">
+                    First Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="First Name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Select Role <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    value={role}
+                    onValueChange={(value) => setRole(value)}
+                  >
+                    <SelectTrigger className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="organizationRepresentative">
+                        Organization Representative
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Enter your Email"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block">
+                    Phone <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Enter your Phone Number"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Enter your Password"
+                    required
+                  />
+                  <div className="bg-slate-900 p-4 rounded-lg text-sm space-y-1">
+                    <div className="text-blue-400">Password Should be:</div>
+                    <ul className="text-blue-400 space-y-1 list-disc pl-4">
+                      <li>At least 8 characters (and up to 15 characters)</li>
+                      <li>At least one lowercase and uppercase character</li>
+                      <li>
+                        Inclusion of at least one special character, e.g., ! @ #
+                        ?
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="terms" className="text-sm">
+                    By clicking Sign up, I agree that I have read and accepted
+                    the{" "}
+                    <a
+                      href="/terms"
+                      className="text-emerald-500 hover:underline"
+                    >
+                      Terms of Use
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="/privacy"
+                      className="text-emerald-500 hover:underline"
+                    >
+                      Privacy Policy
+                    </a>
+                    .
+                  </label>
+                </div>
+
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={isLoading}
+                  className="w-full bg-emerald-500 text-white p-3 rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Processing...</span>
+                    </div>
+                  ) : (
+                    "Sign Up"
+                  )}
+                </button>
+              </form>
             </div>
+          </div>
 
-            {otpSent && (
-              <div>
-                <label htmlFor="otp" className="sr-only">
-                  OTP
-                </label>
+          <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Enter OTP</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p>Please enter the OTP sent to your email address.</p>
                 <input
-                  id="otp"
-                  name="otp"
                   type="text"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter OTP"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
+                  className="w-full p-3 border rounded-lg"
+                  placeholder="Enter OTP"
                 />
+                <button
+                  onClick={handleSubmit}
+                  disabled={isLoading || !otp}
+                  className="w-full bg-emerald-500 text-white p-3 rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Verifying...</span>
+                    </div>
+                  ) : (
+                    "Verify & Sign Up"
+                  )}
+                </button>
               </div>
-            )}
-
-            <div>
-              <label htmlFor="role" className="sr-only">
-                Role
-              </label>
-              <select
-                id="role"
-                name="role"
-                required
-                className="block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
-                <option value="university">University</option>
-              </select>
-            </div>
-
-            {
-              <div>
-                <label htmlFor="password" className="sr-only">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            }
-          </div>
-
-          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              disabled={!otp || !password}
-            >
-              Sign up
-            </button>
-          </div>
-
-          <div className="text-center mt-4">
-            <span className="text-gray-600">Already have an account?</span>
-            <button
-              type="button"
-              className="text-indigo-600 hover:text-indigo-500"
-              onClick={() => router.push("/signin")}
-            >
-              Sign In
-            </button>
-          </div>
-        </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

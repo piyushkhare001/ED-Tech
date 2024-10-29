@@ -1,6 +1,6 @@
-import dbConnect from "../../../../lib/mognodb";
-import User from "../../../../models/User";
-import OTP from "../../../../models/Otp";
+import dbConnect from "@/lib/mognodb";
+import User from "@/models/User";
+import OTP from "@/models/Otp";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import mailSender from "@/lib/utility/mailSender";
@@ -54,11 +54,8 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       role,
-      verified:role=='teacher'?false:undefined
-    }
-
-    );
-
+      verified: role == "teacher" ? false : undefined,
+    });
 
     await mailSender({
       email: email, // recipient's email
@@ -163,12 +160,9 @@ export async function POST(req: Request) {
         </div>
       </body>
       </html>
-    `  , // call to generate HTML string
+    `, // call to generate HTML string
     });
 
-
-
-   
     return NextResponse.json(
       {
         user: newUser,
@@ -177,7 +171,6 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-
   } catch (error: any) {
     console.error("Error verifying OTP:", error);
 
@@ -202,7 +195,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "An error occurred while verifying the OTP. Please try again later.",
+        message:
+          "An error occurred while verifying the OTP. Please try again later.",
       },
       { status: 500 }
     );

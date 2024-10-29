@@ -12,14 +12,13 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const title = formData.get("title");
-    const thumbnail = formData.get("thumbnail"); // This should be a File object
+    const thumbnail :any = formData.get("thumbnail"); // This should be a File object
     const description = formData.get("description");
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");
 
     // Get session
     const session = await getServerSession(authOptions);
-    console.log(session);
 
     if (!session) {
       return NextResponse.json(
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     // Check if thumbnail exists
     if (!thumbnail || typeof thumbnail === 'string') {
-      return NextResponse.json({ error: "No thumbnail uploaded" }, { status: 400 });
+      return NextResponse.json({ message: "No thumbnail uploaded" }, { status: 400 });
     }
 
     // Convert the File to a Readable stream
@@ -93,7 +92,7 @@ export async function POST(req: NextRequest) {
       certIssued: false,
       
     });
-
+    
     // Save the course to the database
     await newCourse.save();
 

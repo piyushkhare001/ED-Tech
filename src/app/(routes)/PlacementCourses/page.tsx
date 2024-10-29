@@ -1,6 +1,6 @@
 import React from 'react'
 
-import certifiedcourseimg from "../../assets/certification.jpg";
+import certifiedcourseimg from "../../../assets/certification.jpg";
 import Image from 'next/image';
 import CourseCard from '../CourseCard/page';
 
