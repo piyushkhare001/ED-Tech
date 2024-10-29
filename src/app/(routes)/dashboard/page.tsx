@@ -14,7 +14,7 @@ import Sidebar from '@/components/frontend/Sidebar';
 import ProfileDetails from '@/components/frontend/ProfileDetails';
 import LoadingPage from '../loading/page';
 import MyCourses from '@/components/frontend/Mycourses';
-import AddCourse from '@/components/frontend/AddCourse';
+import Course from '@/components/frontend/Course';
 //import Navbar from '@/components/frontend/Navbar';
 export default function DashboardPage() {
 
@@ -53,7 +53,7 @@ console.log("session" , session)
         {view === 'studentPartner' && <StudentPartner />}
         {view === 'Mycourses' && <MyCourses/>}
         {view === 'profile' && <ProfileDetails />} 
-        {view === 'addCourse' && <AddCourse/>}
+        {view === 'course' && <Course/>}
        </div>
      
     </div>

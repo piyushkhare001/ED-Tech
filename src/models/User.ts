@@ -15,13 +15,10 @@ export interface IUser {
   email: string;
   password: string;
 
-
-
   otp?: string;
   otpExpiresAt?: Date;
   role: "student" | "studentPartner" | "admin" | "teacher";
- 
-
+  verified: string;
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
   courses: ICourseProgress[];
@@ -38,7 +35,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "admin", "teacher"],
     default: "student",
   },
-
+  verified: { type: String, enum:['approved','declined','blocked','In progress'],default:'In progress' },
   resetPasswordToken: { type: String },
   resetPasswordExpiresAt: { type: Date },
   otp: { type: String },
