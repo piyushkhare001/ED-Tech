@@ -1,6 +1,6 @@
 "use client";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
-import Sidebar from "../Sidebar/page";
+import Sidebar from "@/components/frontend/Sidebar";
 import Image from "next/image";
 import nextjscourse from "src/assets/tsximg.jpg"
 import tsximg from "src/assets/tsximg.jpg";

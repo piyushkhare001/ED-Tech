@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '../ui/button';
 import ConfirmationModal from './ConfirmationModal';
-
+import { useRouter } from 'next/navigation';
 interface SidebarProps {
   setView: (view: string) => void;
   currentView: string;
@@ -12,6 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
   const session = useSession();
   const role = session?.data?.user?.role;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter()
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -49,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
               </li>
               <li
                 className={`mb-4 cursor-pointer ${currentView === 'addCourse' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
-                onClick={() => setView('addCourse')}
+                onClick={() => router.push('/instructor/course')}
               >
                 <div className="flex items-center space-x-2">
                   <span>Add Courses</span>

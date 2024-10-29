@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { useSession } from 'next-auth/react';
 import Spinner from '../ui/spinner';
 
@@ -13,8 +13,9 @@ const EnrolledCourses: React.FC = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`/api/getEnrollCourse/${userId}`);
-        setCourses(response.data); // Set the courses data
+        const response = await fetch(`/api/getEnrollCourse/${userId}`);
+        const res = await response.json()
+        setCourses(res.data); // Set the courses data
       } catch (err) {
         console.error('Error fetching enrolled courses:', err);
         setError('Failed to fetch enrolled courses.');
@@ -34,7 +35,7 @@ const EnrolledCourses: React.FC = () => {
   return (
     <div>
       <h2 className='text-3xl font-sans mt-2'>Your Enrolled Courses</h2>
-      {courses.length > 0 ? (
+      {courses?.length > 0 ? (
         <ul>
           {courses.map(course => (
             <div key={course.id} className='flex pl-14'>
@@ -82,7 +83,7 @@ const EnrolledCourses: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <p className='text-center'>No courses found</p>
+        <p className='flex justify-center mt-36 font-sans text-2xl'>No courses found</p>
       )}
     </div>
   );

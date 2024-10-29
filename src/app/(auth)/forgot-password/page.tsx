@@ -1,5 +1,7 @@
 "use client";
 
+import Footer from "@/components/frontend/footer";
+import NavBar from "@/components/frontend/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,13 +25,7 @@ const ForgotPassword = () => {
   
     setIsLoading(true);
     try {
-      const response = await fetch('api/reset/request-reset', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email })  // Pass email as an object
-      }); // Missing ); was here
+      const response = await fetch('api/reset/request-reset'); // Missing ); was here
   
       const res = await response.json();
       if (res.ok) {  // Check if the response was successful
@@ -50,7 +46,10 @@ const ForgotPassword = () => {
   
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+    <>
+    <NavBar/>
+    <div className="max-w-md mx-auto m-16 p-6 bg-white rounded-lg shadow-md">
+
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Forgot Password?</h2>
         <p className="text-gray-600 mt-2">
@@ -94,6 +93,8 @@ const ForgotPassword = () => {
         </div>
       </form>
     </div>
+    <Footer/>
+    </>
   );
 };
 

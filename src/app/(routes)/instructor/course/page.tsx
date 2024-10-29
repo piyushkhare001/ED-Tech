@@ -2,7 +2,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import Sidebar from "../../Sidebar/page";
+
 import Alert from "@/components/ui/alertTeacherCourse";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
@@ -460,7 +460,7 @@ const AddCourse = () => {
       <Navbar openNav={() => {}} />
       <div className="min-h-screen flex bg-white">
         {/* Sidebar */}
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}

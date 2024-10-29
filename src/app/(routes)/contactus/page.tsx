@@ -1,4 +1,5 @@
 "use client";
+import Footer from '@/components/frontend/footer';
 import NavBar from '@/components/frontend/Navbar';
 import React from 'react'
 import { FaBook } from "react-icons/fa";
@@ -142,7 +143,9 @@ const page = () => {
           </form>
         </div>
       </div>
+
     </div>
+    <Footer/>
     </div>
   )
 }

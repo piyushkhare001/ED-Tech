@@ -70,7 +70,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-200/80">
+    <div className="min-h-screen m-5 bg-gray-200/80">
       <div className="mx-auto max-w-[1200px] p-4 h-screen flex items-center">
         <div className="w-full flex shadow-lg rounded-lg overflow-hidden bg-white">
           <div className="hidden md:flex md:w-1/2 bg-emerald-500 p-12 flex-col text-white relative">

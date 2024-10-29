@@ -5,9 +5,11 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logo.jpeg";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+ const session = useSession()
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -33,7 +35,7 @@ const NavBar: React.FC = () => {
             <a href="/aboutus" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
               About
             </a>
-            <a href="/courses" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
+            <a href="/our-courses" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
               Courses
             </a>
             <a href="/certificate" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
@@ -45,12 +47,23 @@ const NavBar: React.FC = () => {
           </div>
 
           {/* Login/Register */}
-          <div className="hidden md:flex pt-3 -mr-10">
+          {  
+    (session?.data?.user )? (<>
+     <div className="hidden md:flex pt-3 -mr-10">
+              <button onClick={() => {router.push('/dashboard')}} className=" bg-[#1cb69d] text-white rounded-md w-[160px] h-[55px] font-medium text-xl">
+                Dashboard
+              </button>
+          </div>
+    
+    </>) :
+
+         ( <div className="hidden md:flex pt-3 -mr-10">
               <button onClick={() => {router.push('/signup')}} className=" bg-[#1cb69d] text-white rounded-md w-[160px] h-[55px] font-medium text-xl">
                   Login/Register
               </button>
           </div>
-
+         )
+}
           {/* Mobile Menu Icon */}
           <div className="md:hidden flex items-center">
             <button onClick={toggleMenu}>

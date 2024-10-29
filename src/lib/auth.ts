@@ -56,11 +56,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        if(user.role=='teacher'){
-          if(user.verified !=true){
-            throw new Error("Teacher account not verified");
-          }
-        }
+        // if(user.role=='teacher'){
+        //   if(user.verified !=true){
+        //     throw new Error("Teacher account not verified");
+        //   }
+        // }
 
         return {
           id: user._id.toString(),

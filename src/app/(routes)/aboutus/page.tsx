@@ -6,6 +6,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import aboutusimg from '@/assets/aboutusimg.jpg';
 import EducationPartner from '@/components/frontend/EducationPartner';
 import Counter from '@/components/frontend/Counter';
+import Footer from '@/components/frontend/footer';
 
 const AboutUs: React.FC = () => {
   return (
@@ -77,7 +78,9 @@ const AboutUs: React.FC = () => {
             </button>
           </div>
         </div>
+
       </div>
+      <Footer/>
     </div>
   );
 };

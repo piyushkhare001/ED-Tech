@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Sidebar from "../Sidebar/page";
+//import Sidebar from "../Sidebar/page";
 
 const AddCourse = () => {
     const [coursePrice, setCoursePrice] = useState("");
@@ -17,7 +17,7 @@ const AddCourse = () => {
   return (
     <div className="min-h-screen flex bg-gray-900">
       {/* Sidebar */}
-        <Sidebar/>
+        {/* //<Sidebar/> */}
 
       {/* Main Content */}
       <main className="flex-1 p-6">

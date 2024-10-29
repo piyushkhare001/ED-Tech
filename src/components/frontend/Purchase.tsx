@@ -14,12 +14,9 @@ const Purchase = () => {
     if (userId) {
       try {
         const res = await fetch(`/api/getUserPurchase/${userId}`);
-        if (!res.ok) {
-          console.log('got error at the time of calling api');
-      
-        }
-        const data = await res.json();
-        setUserData(data);
+        const response = await res.json()
+    
+        setUserData(response);
      
       } catch (error : any) {
          console.log('Failed to fetch user data');
