@@ -9,13 +9,11 @@ import Purchase from '@/components/frontend/Purchase';
 import EnrolledCourse from '@/components/frontend/EnrolledCourse';
 import StudentPartner from '@/components/frontend/StudentPartner';
 //import { Button } from "src/components/ui/button";
-
 import Sidebar from '@/components/frontend/Sidebar';
 import ProfileDetails from '@/components/frontend/ProfileDetails';
 import LoadingPage from '../loading/page';
 import MyCourses from '@/components/frontend/Mycourses';
-
-import NavBar from '@/components/frontend/Navbar';
+import AddCourse from '@/components/frontend/AddCourse';
 //import Navbar from '@/components/frontend/Navbar';
 export default function DashboardPage() {
 
@@ -42,7 +40,7 @@ console.log("session" , session)
     if (session) {
         return (
             <div>
-       <NavBar/>
+
               <div className="flex">
          
               <Sidebar setView={setView} currentView={view} />
@@ -55,7 +53,7 @@ console.log("session" , session)
         {view === 'studentPartner' && <StudentPartner />}
         {view === 'Mycourses' && <MyCourses/>}
         {view === 'profile' && <ProfileDetails setView={setView}/>} 
-
+        {view === 'addCourse' && <AddCourse/>}
        </div>
      
     </div>

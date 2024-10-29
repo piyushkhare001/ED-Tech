@@ -1,18 +1,18 @@
 "use client";
-import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
-import Sidebar from "../../Sidebar/page";
+//import Link from "next/link";
+import React, { useEffect, useState } from "react";
+
 import Alert from "@/components/ui/alertTeacherCourse";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
-import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
+//import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
 import DocumentEditor from "@/components/ui/documentEditor";
-import { color } from "framer-motion";
+//import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
-import "../../../g.css";
-import Navbar from "@/components/frontend/Navbar";
+
+//import Navbar from "@/components/frontend/Navbar";
 import removeHtmlTags from "@/lib/utility/removeHTML";
 interface Lecture {
   type: { type: String };
@@ -37,7 +37,6 @@ const AddCourse = () => {
   const [thumbnailLink, setThumbnailLink] = useState<String | null>("");
   const [status, setstatus] = useState(1);
   const [drafted, setDrafted] = useState(false);
-
 
   // Lectures
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -313,7 +312,6 @@ const AddCourse = () => {
     setLoader(false);
   }, []);
 
-
   const handleDraft = async () => {
     try {
       // Course part
@@ -335,7 +333,6 @@ const AddCourse = () => {
             method: "POST",
             body: formData,
           });
-
 
           const res = await req.json();
           setButtonLoader({ id: 1, status: false });
@@ -456,10 +453,10 @@ const AddCourse = () => {
 
   return (
     <>
-      <Navbar openNav={() => {}} />
+      
       <div className="min-h-screen flex bg-white">
         {/* Sidebar */}
-        <Sidebar />
+       
         <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}
