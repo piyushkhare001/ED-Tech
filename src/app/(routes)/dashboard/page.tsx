@@ -9,12 +9,11 @@ import Purchase from '@/components/frontend/Purchase';
 import EnrolledCourse from '@/components/frontend/EnrolledCourse';
 import StudentPartner from '@/components/frontend/StudentPartner';
 //import { Button } from "src/components/ui/button";
-//import RazorpayButton from "src/components/frontend/TestingPaymentPage";
 import Sidebar from '@/components/frontend/Sidebar';
 import ProfileDetails from '@/components/frontend/ProfileDetails';
 import LoadingPage from '../loading/page';
 import MyCourses from '@/components/frontend/Mycourses';
-import AddCourse from '@/components/frontend/AddCourse';
+import Course from '@/components/frontend/Course';
 //import Navbar from '@/components/frontend/Navbar';
 export default function DashboardPage() {
 
@@ -41,7 +40,6 @@ console.log("session" , session)
     if (session) {
         return (
             <div>
-                    {/* <Navbar /> */}
               <div className="flex">
               <Sidebar setView={setView} currentView={view} />
 
@@ -52,8 +50,8 @@ console.log("session" , session)
         {view === 'purchase' && <Purchase />}
         {view === 'studentPartner' && <StudentPartner />}
         {view === 'Mycourses' && <MyCourses/>}
-        {view === 'profile' && <ProfileDetails />} 
-        {view === 'addCourse' && <AddCourse/>}
+        {view === 'profile' && <ProfileDetails setView={setView}/>} 
+        {view === 'addCourse' && <Course/>}
        </div>
      
     </div>
@@ -64,4 +62,5 @@ console.log("session" , session)
     }
 
     return null;
+
 }

@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
-
+//import { useSession } from 'next-auth/react';
+import { useToast } from "@/hooks/use-toast"
+import { signOut } from 'next-auth/react';
+import ConfirmationModal from './ConfirmationModal';
 
 interface User {
   dateOfBirth: string;
@@ -15,8 +17,9 @@ interface User {
 }
 
 const Settings = () => {
-  const session = useSession();
-  const profileId = session?.data?.user?.id
+ // const session = useSession();
+
+  const { toast } = useToast()
   const [formData, setFormData] = useState<User>({
     dateOfBirth: '',
     gender: '',
@@ -25,7 +28,7 @@ const Settings = () => {
     address: '',
     collageName: '',
   });
-  const [error, setError] = useState<string | null>(null);
+
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -35,19 +38,29 @@ const Settings = () => {
       [name]: value,
     });
   };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+     const res =  await axios.put(`/api/profile/update`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if(res){
+        toast({
+          title: "profile updated succesfully",
+          description: "your  profile data has been updated ",
+        })
+      }
+    } catch (err) {
+      toast({
+        title: "profile updation failed",
+        description: "your  profile data did'nt get update ",
+      })
 
-  // Handle form submission
-// Handle form submission
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    await axios.put(`/api/profile/update/${profileId}`, formData); // Using dynamic userId in the URL
-    alert('Profile updated successfully!');
-  } catch (err) {
-    setError('Failed to update profile.');
+    }
   }
-}
-
   
 
   const handleCancel = () => {
@@ -62,15 +75,42 @@ const handleSubmit = async (e: React.FormEvent) => {
     });
   };
 
+
+  const  handleDelete = async () => {
+    try {
+      const res =  await axios.delete(`/api/profile/delete`);
+       if(res){
+         toast({
+           title: " Deleted succesfully",
+           description: "your  profile data has been updated ",
+         })
+       }
+       await signOut({ callbackUrl: '/signin' });
+       setIsModalOpen(false);
+     } catch (err) {
+       toast({
+         title: "user deletion failed",
+         description: "getting server error in deleting  you ",
+       })
+ 
+     }
+   }
+   
+  
+ 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  console.log(isHovered)
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
       <form
         className="bg-white text-gray-800 p-8 rounded-lg shadow-lg w-full max-w-2xl"
         onSubmit={handleSubmit}
       >
         <h2 className="text-2xl font-semibold mb-6">Additional Information</h2>
 
-        {error && <p className="text-red-500">{error}</p>}
+      
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
          
@@ -174,6 +214,36 @@ const handleSubmit = async (e: React.FormEvent) => {
           </button>
         </div>
       </form>
+
+      <div className="bg-red-100 text-red-800 p-6 rounded-lg shadow-lg mt-8 max-w-lg mx-auto">
+            <div className="flex items-center space-x-4">
+                <div className="text-red-600 text-3xl">
+                    <i className="fas fa-trash-alt"></i> {/* Or any delete icon */}
+                </div>
+                <h2 className="text-xl font-bold">Delete Account</h2>
+            </div>
+            <p className="mt-4 text-sm text-gray-700">
+                Would you like to delete your account? This account may contain paid courses.
+                Deleting your account is permanent and will remove all the content associated with it.
+            </p>
+            <div className="mt-4">
+                <button
+                    className={`text-red-700 underline text-sm font-semibold ${isHovered ? 'hover:text-red-900' : ''}`}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    I want to delete my account.
+                </button>
+            </div>
+        </div>
+        <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Deletion Confirmation"
+        description=" Would you like to delete your account? This account may contain paid courses."
+      />
     </div>
   );
 };
