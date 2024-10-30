@@ -1,7 +1,7 @@
 import cloudinary from "../../../../config/cloudinary"; // Adjust the import path as necessary
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path as necessary
-import connectToMongoDB from "@/lib/mognodb";
+import connectToMongoDB from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 
 export async function DELETE(req: NextRequest) {
@@ -35,7 +35,9 @@ export async function DELETE(req: NextRequest) {
         }
         if (lectureToDelete.video) {
           const publicId = extractPublicId(lectureToDelete.video); // Extract public_id from imageUrl
-          await cloudinary.uploader.destroy(`courses_lecture_videos/${publicId}`); // Remove image from Cloudinary
+          await cloudinary.uploader.destroy(
+            `courses_lecture_videos/${publicId}`
+          ); // Remove image from Cloudinary
         }
 
         await Lecture.findByIdAndDelete(e);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth"; // Authentication options
-import connectToMongoDB from "@/lib/mognodb"; // MongoDB connection
+import connectToMongoDB from "@/lib/mongodb"; // MongoDB connection
 import Organization from "@/models/Organization";
 import { Types } from "mongoose";
 

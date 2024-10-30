@@ -15,7 +15,7 @@
 
 //         try {
 //             const updatedProfile = await Profile.findByIdAndUpdate(
-//                 userId, 
+//                 userId,
 //                 { ...req.body },
 //                 { new: true }
 //             );
@@ -34,12 +34,6 @@
 //     }
 // }
 
-
-
-
-
-
-
 // interface User {
 //     dateOfBirth: string;
 //     gender: string;
@@ -48,74 +42,71 @@
 //     address: string;
 //     collageName: string;
 //   }
-  
 
-
-
-
-
-
-
-
-
-
-
-import dbConnect from "@/lib/mognodb";
-import Profile from '@/models/Profile';
+import dbConnect from "@/lib/mongodb";
+import Profile from "@/models/Profile";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function PUT(req: Request) {
-    const session = await getServerSession(authOptions);
-  
-    if (!session) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json(
+      { message: "Unauthorized access" },
+      { status: 403 }
+    );
+  }
+
+  const userId = session.user?.id;
+
+  try {
+    const { dateOfBirth, gender, mobile, about, address, collageName } =
+      await req.json();
+
+    if (
+      !dateOfBirth &&
+      !gender &&
+      !about &&
+      !address &&
+      !mobile &&
+      !collageName
+    ) {
       return NextResponse.json(
-        { message: "Unauthorized access" },
-        { status: 403 }
+        {
+          success: false,
+          message: "At least one field is required.",
+        },
+        { status: 400 }
       );
     }
-    
-    const userId = session.user?.id;
 
-    try {
-        const { dateOfBirth, gender, mobile, about, address, collageName } = await req.json();
+    await dbConnect();
 
-        if (!dateOfBirth && !gender && !about && !address && !mobile && !collageName) {
-            return NextResponse.json(
-              {
-                success: false,
-                message: "At least one field is required.",
-              },
-              { status: 400 }
-            );
-        }
+    // Update or create profile directly
+    const updatedProfile = await Profile.findByIdAndUpdate(
+      userId,
+      { dateOfBirth, gender, about, mobile, address, collageName },
+      { new: true, upsert: true }
+    );
 
-        await dbConnect();
-
-        // Update or create profile directly
-        const updatedProfile = await Profile.findByIdAndUpdate(
-            userId, 
-            { dateOfBirth, gender, about, mobile, address, collageName },
-            { new: true, upsert: true }  
-        );
-
-        return NextResponse.json(
-          {
-            data: updatedProfile,
-            success: true,
-            message: "User profile updated",
-          },
-          { status: 201 }
-        );
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-          {
-            success: false,
-            message: "An error occurred while updating your profile",
-          },
-          { status: 500 }
-        );
-    }
+    return NextResponse.json(
+      {
+        data: updatedProfile,
+        success: true,
+        message: "User profile updated",
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "An error occurred while updating your profile",
+      },
+      { status: 500 }
+    );
+  }
 }

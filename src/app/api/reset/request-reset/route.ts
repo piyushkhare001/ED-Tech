@@ -1,4 +1,4 @@
-import connectToDatabase from "@/lib/mognodb";
+import connectToDatabase from "@/lib/mongodb";
 import UserModel from "@/models/User";
 import { generateResetToken } from "@/lib/token";
 import mailSender from "@/lib/utility/mailSender";
@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Email is required and password" },{status:400});
+    return NextResponse.json(
+      { error: "Email is required and password" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -17,13 +20,13 @@ export async function POST(req: NextRequest) {
 
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return NextResponse.json({ error: "User not found" },{status:400});
+      return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
     console.log(user);
-    
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return NextResponse.json({ error: "Invalid password" },{status:400});
+      return NextResponse.json({ error: "Invalid password" }, { status: 400 });
     }
     const resetToken = generateResetToken();
     const resetPasswordExpiresAt = new Date(Date.now() + 3600000); // Token valid for 1 hour
@@ -40,9 +43,12 @@ export async function POST(req: NextRequest) {
       body: passwordResetTemplate(resetLink),
     });
 
-    return NextResponse.json({ message: "Password reset link sent to email" },{status:200});
+    return NextResponse.json(
+      { message: "Password reset link sent to email" },
+      { status: 200 }
+    );
   } catch (error: any) {
     console.log(error);
-    return NextResponse.json({ error: "Server error" },{status:500});
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import mongoose, { Model } from "mongoose";
 export interface ICoupon {
   code: string;
   associatedPrice: number;
+  associatetCommission: number;
   validFrom: Date;
   validUntil: Date;
   createdBy: mongoose.Types.ObjectId;
@@ -12,6 +13,7 @@ export interface ICoupon {
 const CouponSchema = new mongoose.Schema<ICoupon>({
   code: { type: String, unique: true },
   associatedPrice: Number,
+  associatetCommission: Number,
   validFrom: Date,
   validUntil: Date,
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "StudentPartner" },
