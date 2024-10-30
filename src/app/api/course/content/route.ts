@@ -1,6 +1,6 @@
-import {Course} from "../../../../models/Course"; // Your Course model
-import connectToMongoDB from '@/lib/mognodb';
-import { NextResponse,NextRequest } from "next/server";
+import { Course } from "../../../../models/Course"; // Your Course model
+import connectToMongoDB from "@/lib/mongodb";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth/next"; // To get session
 import { authOptions } from "../../../../lib/auth";
 
@@ -19,7 +19,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const contentData = await req.json();
-    const content = await Course.findByIdAndUpdate(contentData._id,{$set:{content:contentData.data}})
+    const content = await Course.findByIdAndUpdate(contentData._id, {
+      $set: { content: contentData.data },
+    });
     // const newContent = new Course(contentData);
     // await newContent.save();
 
@@ -52,10 +54,16 @@ export async function DELETE(request: Request) {
     const deletedCourse = await Course.findByIdAndDelete(courseId);
 
     if (!deletedCourse) {
-      return NextResponse.json({ message: "Course not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ message: "Course deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Course deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: "Internal server error.", error },
@@ -85,7 +93,10 @@ export async function PUT(request: Request) {
     });
 
     if (!updatedCourse) {
-      return NextResponse.json({ message: "Course not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(updatedCourse, { status: 200 });
@@ -101,9 +112,12 @@ export async function GET() {
   await connectToMongoDB();
 
   try {
-    const contents = await Course.find().populate('children courses');
+    const contents = await Course.find().populate("children courses");
     return NextResponse.json(contents);
   } catch (error) {
-    return NextResponse.json({ message: 'Internal server error.', error }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error.", error },
+      { status: 500 }
+    );
   }
 }

@@ -1,10 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import BankDetails from '@/models/BankDetails'; // Adjust the import path as needed
-import StudentPartner from '@/models/StudentPartner'; // Assume this model exists
-import connectToMongoDB from '@/lib/mognodb';
-
-
-
+import { NextRequest, NextResponse } from "next/server";
+import BankDetails from "@/models/BankDetails";
+import StudentPartner from "@/models/StudentPartner";
+import connectToMongoDB from "@/lib/mongodb";
 
 export async function PUT(req: NextRequest) {
   try {
@@ -16,11 +13,16 @@ export async function PUT(req: NextRequest) {
     // Find the StudentPartner by email
     const studentPartner = await StudentPartner.findOne({ email });
     if (!studentPartner) {
-      return NextResponse.json({ error: 'Student partner not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Student partner not found" },
+        { status: 404 }
+      );
     }
 
     // Check if bank details already exist for this student partner
-    let existingBankDetails = await BankDetails.findOne({ studentPartnerId: studentPartner._id });
+    let existingBankDetails = await BankDetails.findOne({
+      studentPartnerId: studentPartner._id,
+    });
 
     if (existingBankDetails) {
       // Update existing bank details
@@ -33,17 +35,22 @@ export async function PUT(req: NextRequest) {
       // Create new bank details
       existingBankDetails = await BankDetails.create({
         studentPartnerId: studentPartner._id,
-        ...bankDetails
+        ...bankDetails,
       });
     }
 
-    return NextResponse.json({
-      message: 'Bank details updated successfully',
-      data: existingBankDetails
-    }, { status: 200 });
-
+    return NextResponse.json(
+      {
+        message: "Bank details updated successfully",
+        data: existingBankDetails,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Error updating bank details:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error updating bank details:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

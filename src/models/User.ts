@@ -14,10 +14,10 @@ export interface IUser {
   name?: string;
   email: string;
   password: string;
-
+  collegeName: string;
   otp?: string;
   otpExpiresAt?: Date;
-  role: "student" | "studentPartner" | "admin" | "teacher";
+  role: "student" | "admin" | "teacher";
   verified: string;
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;
@@ -35,7 +35,12 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "admin", "teacher"],
     default: "student",
   },
-  verified: { type: String, enum:['approved','declined','blocked','In progress'],default:'In progress' },
+  verified: {
+    type: String,
+    enum: ["approved", "declined", "blocked", "In progress"],
+    default: "In progress",
+  },
+  collegeName: { type: String },
   resetPasswordToken: { type: String },
   resetPasswordExpiresAt: { type: Date },
   otp: { type: String },

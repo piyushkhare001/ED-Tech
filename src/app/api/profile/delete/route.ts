@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import dbConnect from '@/lib/mognodb'; // MongoDB connection
+import dbConnect from "@/lib/mongodb"; // MongoDB connection
 import { User } from "@/models/User"; // Your User model
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -31,9 +31,12 @@ export async function DELETE() {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "User deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error("Error deleting user:", error);
     return NextResponse.json(
       { message: "Error deleting user", error },
       { status: 500 }

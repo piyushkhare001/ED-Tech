@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../lib/auth";
@@ -17,10 +17,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   await dbConnect();
 
-  const {id} = await req.json();
+  const { id } = await req.json();
 
   if (!id) {
-    return NextResponse.json({ message: "Missing required fields" },{status:400});
+    return NextResponse.json(
+      { message: "Missing required fields" },
+      { status: 400 }
+    );
   }
 
   try {

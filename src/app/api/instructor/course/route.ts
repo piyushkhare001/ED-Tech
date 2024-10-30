@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectToDatabase from "../../../../lib/mognodb"; // Ensure you have the MongoDB connection function
-import { Course } from '../../../../models/Course'; // Adjust the path to your Course model
-import { Types } from 'mongoose';
-import { Lecture } from '@/models/Lecture';
+import { NextRequest, NextResponse } from "next/server";
+import connectToDatabase from "../../../../lib/mongodb"; // Ensure you have the MongoDB connection function
+import { Course } from "../../../../models/Course"; // Adjust the path to your Course model
+import { Types } from "mongoose";
+import { Lecture } from "@/models/Lecture";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +13,10 @@ export async function POST(req: NextRequest) {
 
     const course = await Course.findById(new Types.ObjectId(id));
     if (!course) {
-      return NextResponse.json({ message: 'Course not found' }, { status: 404 });
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
     }
 
     const lectureIds = course.content; // Assuming `content` holds lecture IDs
@@ -21,14 +24,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Course found',
+        message: "Course found",
         course,
         lectures,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Server Error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error("Server Error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

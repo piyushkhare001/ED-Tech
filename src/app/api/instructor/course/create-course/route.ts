@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path to your course model
-import connectToDatabase from "../../../../../lib/mognodb"; // Ensure you have the MongoDB connection function
+import connectToDatabase from "../../../../../lib/mongodb"; // Ensure you have the MongoDB connection function
 import User from "../../../../../models/User"; // Assuming you have a User model for role validation
 import cloudinary from "../../../../config/cloudinary";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";
-import { Readable } from 'stream'; // Import the Readable stream
-
+import { Readable } from "stream"; // Import the Readable stream
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const title = formData.get("title");
-    const thumbnail :any = formData.get("thumbnail"); // This should be a File object
+    const thumbnail: any = formData.get("thumbnail"); // This should be a File object
     const description = formData.get("description");
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");
@@ -54,8 +53,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if thumbnail exists
-    if (!thumbnail || typeof thumbnail === 'string') {
-      return NextResponse.json({ message: "No thumbnail uploaded" }, { status: 400 });
+    if (!thumbnail || typeof thumbnail === "string") {
+      return NextResponse.json(
+        { message: "No thumbnail uploaded" },
+        { status: 400 }
+      );
     }
 
     // Convert the File to a Readable stream
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest) {
     };
 
     const thumbnailResponse = await uploadThumbnail(stream);
-    
+
     // Create a new course
     const newCourse = new Course({
       appxCourseId: generateUniqueCourseId(),
@@ -90,9 +92,8 @@ export async function POST(req: NextRequest) {
       price,
       createdBy: user._id,
       certIssued: false,
-      
     });
-    
+
     // Save the course to the database
     await newCourse.save();
 
