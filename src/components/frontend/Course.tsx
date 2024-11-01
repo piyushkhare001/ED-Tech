@@ -19,12 +19,13 @@ interface Lecture {
   thumbnail: string;
   createdAt: Date;
   video: string;
+  duration:number;
   _id: string;
 }
 
 const Course = () => {
   const route = useRouter();
-  const [coursePrice, setCoursePrice] = useState("");
+  const [coursePrice, setCoursePrice] = useState("0");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [openToEveryone, setOpenToEveryone] = useState(false);
@@ -38,6 +39,7 @@ const Course = () => {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [lType, setlType] = useState("");
   const [lTitle, setlTitle] = useState("");
+  const [lDuration, setlDuration] = useState("");
   const [lHidden, setlHidden] = useState<boolean>(false);
   const [lDescription, setlDescription] = useState("");
   const [lThumbnailLink, setlThumbnailLink] = useState("");
@@ -66,6 +68,7 @@ const Course = () => {
   const handleLecture = async () => {
     const formData = new FormData();
     formData.append("title", lTitle);
+    formData.append("duration", lDuration);
     formData.append("type", lType);
     formData.append("description", lDescription);
     formData.append("thumbnail", lThumbnailLink);
@@ -200,7 +203,7 @@ const Course = () => {
               const percentCompleted = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
               );
-              setProgress(percentCompleted-1); // Update progress bar
+              setProgress(percentCompleted - 1); // Update progress bar
             },
           }
         );
@@ -238,7 +241,7 @@ const Course = () => {
             headers: { "Content-Type": "multipart/" },
           });
           const res = await req.json();
-          console.log(res);
+          console.log(res.lectures);
 
           if (res.course) {
             setDrafted(true);
@@ -273,6 +276,7 @@ const Course = () => {
           const res = await req.json();
           if (res.lecture) {
             setlTitle(res.lecture.title);
+            setlDuration(res.lecture.duration);
             setlType(res.lecture.type);
             setlHidden(res.lecture.hidden);
             setlDescription(res.lecture.description);
@@ -306,11 +310,10 @@ const Course = () => {
     setLoader(true);
     handleLocationDraft(null);
     setLoader(false);
-  }, []);
+  }, [status]);
 
-  const handleDraft = async () => {
+  const handleDraft = async (publish = false) => {
     try {
-      // Course part
       const formData = new FormData();
       formData.append("title", title); // Assuming title is a state variable
       formData.append("description", description); // Assuming description is a state variable
@@ -318,66 +321,73 @@ const Course = () => {
       formData.append("openToEveryone", String(openToEveryone));
       formData.append("publish", String(publish));
       formData.append("lectures", JSON.stringify(lectures));
-      if (status === 1 || status === 2) {
-        setButtonLoader({ id: 1, status: true });
-        if (thumbnail) {
-          formData.append("thumbnail", thumbnail); // Assuming thumbnail is a file object
-        }
-        if (!id) {
-          const req = await fetch("/api/instructor/course/create-course", {
-            method: "POST",
-            body: formData,
+      setButtonLoader({ id: 1, status: true });
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail); // Assuming thumbnail is a file object
+      }
+      if (!id) {
+        if (title === "" || description === "" || !thumbnail) {
+          return setHandleAlert({
+            color: "yellow",
+            message: "Please fill all the required fields!",
+            visible: true,
           });
-
-          const res = await req.json();
-          setButtonLoader({ id: 1, status: false });
-          if (req.status == 201) {
-            setDrafted(true);
-            setThumbnailLink(res.course.imageUrl || "");
-            setPublish(res.course.publish);
-            setThumbnailLink(res.course.imageUrl);
-            setId(res.course._id);
-            setLectures(res.lectures);
-            route.push(`/instructor/course?id=${res.course._id}`);
-            return setHandleAlert({
-              color: "green",
-              message: "Course created successfully!",
-              visible: true,
-            });
-          }
-          // } else if (search[0].slice(0, 3) == "?id") {
-        } else if (id) {
-          formData.append("id", id);
-          const req = await fetch("/api/instructor/course/update-course", {
-            method: "POST",
-            body: formData,
-          });
-
-          const res = await req.json();
-          setButtonLoader({ id: 1, status: false });
-
-          if (req.status == 200) {
-            setDrafted(true);
-            setThumbnailLink(res.imageUrl || "");
-            setPublish(res.course.publish);
-            setId(res.course._id);
-            setLectures(res.lectures);
-            return setHandleAlert({
-              color: "green",
-              message: "Course updated successfully!",
-              visible: true,
-            });
-          }
         }
-        return setHandleAlert({
-          color: "red",
-          message: "An error occurred in Server kindly try again",
-          visible: true,
+        const req = await fetch("/api/instructor/course/create-course", {
+          method: "POST",
+          body: formData,
         });
+
+        const res = await req.json();
+        setButtonLoader({ id: 1, status: false });
+        if (req.status == 201) {
+          setDrafted(true);
+          setThumbnailLink(res.course.imageUrl || "");
+          setPublish(res.course.publish);
+          setThumbnailLink(res.course.imageUrl);
+          setId(res.course._id);
+          setLectures(res.lectures);
+          route.push(`/instructor/course?id=${res.course._id}`);
+          return setHandleAlert({
+            color: "green",
+            message: "Course created successfully!",
+            visible: true,
+          });
+        } else {
+          return setHandleAlert({
+            color: "red",
+            message: res.message,
+            visible: true,
+          });
+        }
+        // } else if (search[0].slice(0, 3) == "?id") {
+      }
+      if (id) {
+        formData.append("id", id);
+        console.log(id);
+        const req = await fetch("/api/instructor/course/update-course", {
+          method: "POST",
+          body: formData,
+        });
+
+        const res = await req.json();
+        console.log(res);
+        setButtonLoader({ id: 1, status: false });
+
+        if (req.status == 200) {
+          setDrafted(true);
+          setThumbnailLink(res.imageUrl ? res.imageUrl : "");
+          setPublish(res.publish ? true : false);
+          setId(res._id);
+          setLectures(res.lectures);
+          return setHandleAlert({
+            color: "green",
+            message: "Course updated successfully!",
+            visible: true,
+          });
+        }
       }
     } catch (err) {
-      console.log(err);
-
       setHandleAlert({
         color: "red",
         message: "An error occurred in Server kindly try again",
@@ -385,7 +395,6 @@ const Course = () => {
       });
     }
   };
-
   const handleCourseDelete = async (id: any) => {
     setHandleAlert({
       message: "Deleting process will take time please wait.",
@@ -445,7 +454,6 @@ const Course = () => {
       });
     }
   };
-
   return (
     <>
       <Navbar />
@@ -695,45 +703,6 @@ const Course = () => {
                           </h4>
                         </div>
                       </div>
-                      {/* <div className="mb-4 w-1/2">
-                        <label
-                          className="block text-gray-900 mb-2"
-                          htmlFor="category"
-                        >
-                          Open to every one{" "}
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex items-center">
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={openToEveryone}
-                              onChange={() =>
-                                setOpenToEveryone(!openToEveryone)
-                              }
-                            />
-                            <div
-                              className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
-                                openToEveryone
-                                  ? "bg-green-500"
-                                  : "bg-gray-300 shadow-md"
-                              } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
-                            >
-                              <span
-                                className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
-                                  openToEveryone ? "translate-x-5" : ""
-                                }`}
-                              ></span>
-                            </div>
-                          </label>
-                          <h4 className="ml-4 text-gray-900">
-                            {lHidden
-                              ? "Lecture is hidden."
-                              : "Lecture is visible."}
-                          </h4>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   {/* Course Thumbnail */}
@@ -927,7 +896,7 @@ const Course = () => {
                     </div>
                   </div>
                   {/* Lecture Description */}
-                  <div className="mt-12">
+                  <div className="mt-6">
                     <label className="block text-gray-900 mb-2">
                       Lecture Description{" "}
                       <span className="text-red-500"> *</span>
@@ -942,40 +911,64 @@ const Course = () => {
                   </div>
                   {/* Lecture check box*/}
                   <div className="w-1/2">
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-900 mb-2"
-                        htmlFor="category"
-                      >
-                        Disable this Lecture{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center">
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={lHidden}
-                            onChange={() => setlHidden(!lHidden)}
-                          />
-                          <div
-                            className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
-                              lHidden ? "bg-green-500" : "bg-gray-300 shadow-md"
-                            } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
-                          >
-                            <span
-                              className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
-                                lHidden ? "translate-x-5" : ""
-                              }`}
-                            ></span>
-                          </div>
+                    <div className="flex my-4">
+                    <div className="">
+                        <label
+                          className="block text-gray-900 mb-2"
+                          htmlFor="category"
+                        >
+                          Lecture Duration
+                          <span className="text-red-500">*</span>
                         </label>
-                        <h4 className="ml-4 text-gray-900">
-                          {lHidden
-                            ? "Lecture is hidden."
-                            : "Lecture is visible."}
-                        </h4>
+                        <div className="flex items-center">
+                          <label className="relative inline-flex items-center cursor-pointer"></label>
+                          <input
+                            type="number"
+                            placeholder="Ex. 60 mins or 130 mins Always in minutes"
+                            value={lDuration}
+                            onChange={(e) => setlDuration(e.target.value)}
+                            className="w-full p-3 rounded-lg bg-gray-100 shadow-md text-gray-900 border border-gray-700 focus:border-yellow-500 focus:outline-none"
+                          />
+                        </div>
                       </div>
+                      <div className="ml-4">
+                        <label
+                          className="block text-gray-900 mb-2"
+                          htmlFor="category"
+                        >
+                          Disable this Lecture{" "}
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex items-center">
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="sr-only"
+                              checked={lHidden}
+                              onChange={() => setlHidden(!lHidden)}
+                            />
+                            <div
+                              className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
+                                lHidden
+                                  ? "bg-green-500"
+                                  : "bg-gray-300 shadow-md"
+                              } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
+                            >
+                              <span
+                                className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
+                                  lHidden ? "translate-x-5" : ""
+                                }`}
+                              ></span>
+                            </div>
+                          </label>
+                          <h4 className="ml-4 text-gray-900">
+                            {lHidden
+                              ? "Lecture is hidden."
+                              : "Lecture is visible."}
+                          </h4>
+                        </div>
+                      </div>
+                      
                     </div>
                     <div className="mb-4">
                       <div className="flex">
@@ -1000,6 +993,7 @@ const Course = () => {
                               route.replace(`course?id=${id}`);
                               setlDescription("");
                               setlTitle("");
+                              setlDuration("");
                               setlHidden(false);
                               setlThumbnailLink("");
                               setlVideoLink("");
@@ -1022,21 +1016,23 @@ const Course = () => {
                           return (
                             <>
                               <li
-                                className="text-gray-100 flex w-full mb-6"
+                                className="text-gray-100 md:flex w-full mb-6"
                                 key={String(Date.now()) + e._id}
                               >
-                                {e.thumbnail ? (
-                                  <img
-                                    src={e.thumbnail}
-                                    alt=""
-                                    className="max-w-64 w-64 max-h-1/2 rounded-md"
-                                  />
-                                ) : (
-                                  <div className="max-w-64 min-w-64 w-64 h-full h-32 flex justify-center items-center">
-                                    <IoCode className="text-gray-900 w-5 h-5" />
-                                  </div>
-                                )}
-                                <div className="flex flex-col mx-10 justify-between w-full">
+                                <div>
+                                  {e.thumbnail ? (
+                                    <img
+                                      src={e.thumbnail}
+                                      alt=""
+                                      className="max-w-64 w-64 max-h-1/2 rounded-md"
+                                    />
+                                  ) : (
+                                    <div className="max-w-64 min-w-64 w-64 h-32 flex justify-center items-center">
+                                      <IoCode className="text-gray-900 w-5 h-5" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex flex-col md:mx-10 justify-between w-full">
                                   <div>
                                     <h3 className="text-xl mt-2 text-gray-900 font-bold">
                                       {e.title || "Untitled Lecture"}
@@ -1052,9 +1048,15 @@ const Course = () => {
                                         ? "..."
                                         : null}
                                     </h3>
+                                    <div className="flex">
                                     <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
                                       {e.type}
                                     </h3>
+                                    <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
+                                      {e.duration} {e.duration?'Mins':''}
+                                    </h3>
+
+                                    </div>
                                   </div>
                                   <div className="flex w-64">
                                     <button
@@ -1123,13 +1125,12 @@ const Course = () => {
                 </div>
               )}
               {/* Navigation Buttons */}
-              <div className="flex justfy-between w-full">
-                <div className="w-full"></div>
-                <div className="flex justify-end mt-8 space-x-4">
+              <div>
+                <div className="w-full flex justify-end mt-8 space-x-4">
                   {status == 1 ? (
                     <>
                       <button
-                        onClick={handleDraft}
+                        onClick={() => handleDraft()}
                         className="py-2 px-6 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
                       >
                         {buttonLoader.status && buttonLoader.id === 1 ? (
@@ -1183,9 +1184,9 @@ const Course = () => {
                   {status === 4 ? (
                     !publish ? (
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           setPublish(true);
-                          handleDraft();
+                          await handleDraft(true);
                         }}
                         className="py-2 px-6 rounded-lg bg-green-500 text-white hover:bg-green-600"
                       >
@@ -1193,9 +1194,9 @@ const Course = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           setPublish(false);
-                          handleDraft();
+                          await handleDraft();
                         }}
                         className="py-2 px-6 rounded-lg bg-green-500 text-white hover:bg-green-600"
                       >

@@ -4,6 +4,8 @@ import connectToMongoDB from "@/lib/mognodb";
 import { Readable } from "stream"; // Import stream to handle file uploads
 import mongoose from "mongoose"; // Import mongoose for ObjectId conversion
 import cloudinary from "../../../../config/cloudinary";
+import User from "@/models/User";
+import { Lecture } from "@/models/Lecture";
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,19 +20,15 @@ export async function POST(req: NextRequest) {
     if (removeImage === "true") {
       updatedData.imageUrl = null;
       try {
-        const publicId = extractPublicId(course.imageUrl); // Extract public_id from imageUrl
-        const data = await cloudinary.uploader.destroy(
-          `course_thumbnails/${publicId}`
-        );
+        if (course) {
+          const publicId = extractPublicId(course.imageUrl); // Extract public_id from imageUrl
+          await cloudinary.uploader.destroy(`course_thumbnails/${publicId}`);
+        }
       } catch (e) {}
     } else {
       const thumbnail = formData.get("thumbnail");
-
       if (thumbnail || typeof thumbnail === "string") {
-        // Convert the File to a Readable stream
-
-        const stream = Readable.from(thumbnail.stream());
-        // Upload thumbnail to Cloudinary using a Promise-based approach
+        const stream = Readable.from((thumbnail as File).stream());
         const uploadThumbnail = async (stream: Readable) => {
           return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
@@ -52,17 +50,18 @@ export async function POST(req: NextRequest) {
 
         const thumbnailResponse = await uploadThumbnail(stream);
         try {
-          const publicId = extractPublicId(course.imageUrl); // Extract public_id from imageUrl
-          const data = await cloudinary.uploader.destroy(
-            `course_thumbnails/${publicId}`
-          );
+          if (course) {
+            const publicId = extractPublicId(course.imageUrl); // Extract public_id from imageUrl
+            const data = await cloudinary.uploader.destroy(
+              `course_thumbnails/${publicId}`
+            );
+          }
         } catch (e) {}
         updatedData.imageUrl = (
           thumbnailResponse as { secure_url: string }
         ).secure_url;
       }
     }
-
     // Populate other fields if they exist in the form data
     const title = formData.get("title");
     const appxCourseId = formData.get("appxCourseId");
@@ -70,36 +69,29 @@ export async function POST(req: NextRequest) {
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");
     const publish = formData.get("publish");
-    const lectures = formData.get("lectures")||[] ; // Assuming content is sent in the form data as an array of ObjectId strings
 
-    
     if (title) updatedData.title = title;
     if (appxCourseId) updatedData.appxCourseId = appxCourseId;
     if (description) updatedData.description = description;
-    if (openToEveryone !== null) updatedData.openToEveryone = openToEveryone==='true'?true:false;
-    if (publish !== null) updatedData.publish = publish==='true'?true:false;
+    if (openToEveryone !== null)
+      updatedData.openToEveryone = openToEveryone === "true" ? true : false;
+    if (publish !== null)
+      updatedData.publish = publish === "true" ? true : false;
     if (price) updatedData.price = price;
-
-    if (lectures && lectures.length !=0) {
-      updatedData.content = Array.isArray(lectures)
-        ? lectures.map((id) => new mongoose.Types.ObjectId(id))
-        : [];
-    }
-    console.log(courseId);
 
     const updatedCourse = await Course.findByIdAndUpdate(
       new mongoose.Types.ObjectId(courseId),
-      { $set: { ...updatedData } },
-      { new: true }
+      { $set: { ...updatedData } }
     );
     if (!updatedCourse) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
-
+    
+    const lectureIds = updatedCourse.content; 
+    const lectures = await Lecture.find({ _id: { $in: lectureIds } });
     // Return the updated course
-    return NextResponse.json(updatedCourse, { status: 200 });
+    return NextResponse.json({...updatedCourse,lectures}, { status: 200 });
   } catch (error: any) {
-    console.log(error);
     return NextResponse.json(
       { error: "Failed to update course" },
       { status: 500 }
@@ -115,21 +107,3 @@ function extractPublicId(imageUrl: string) {
   }
   return null;
 }
-// import { NextRequest, NextResponse } from 'next/server';
-// import { Course } from "../../../../../models/Course"; // Adjust the path as necessary
-// import connectToMongoDB from "@/lib/mognodb";
-
-// export async function PUT(req: NextRequest) {
-//   try {
-//     await connectToMongoDB();
-//     const body = await req.json();
-//     const updatedCourse = await Course.findByIdAndUpdate(body._id, body.data, { new: true });
-//     if (!updatedCourse) {
-//       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
-//     }
-//     return NextResponse.json(updatedCourse, { status: 200 });
-//   } catch (error:any) {
-//     console.log(error)
-//     return NextResponse.json({ error: 'Failed to update course' }, { status: 500 });
-//   }
-// }

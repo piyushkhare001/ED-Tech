@@ -27,10 +27,8 @@ export default function page() {
             className="border p-2 rounded"
           >
             <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="declined">Declined</option>
-            <option value="approved">Approved</option>
-            <option value="blocked">Blocked</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Unverified</option>
           </select>
         </div>
         <TeacherTable

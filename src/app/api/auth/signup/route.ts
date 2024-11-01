@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       role,
-      verified: role == "teacher" ? false : undefined,
+      verified: role == "teacher" ? "pending" : undefined,
     });
 
     await mailSender({

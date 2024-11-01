@@ -62,7 +62,7 @@ export async function GET(
     const limit = 10;
     const filter: any = {};
     if (status && status !== "all") {
-      filter.verified = status === "verified";
+      filter.verified = status;
     }
     if (search) {
       filter.email = { $regex: search, $options: "i" }; // Case-insensitive search

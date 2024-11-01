@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 interface User {
   email: string;
-  verified: string;
+  verified: boolean;
   courses: any;
 }
 
@@ -31,24 +31,24 @@ export default function TeacherTable({
           `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
         );
         const data = await response.json();
-        setUsers(data.data);
+        setUsers(data.data)
         setTotal(data.total);
-      } catch (e) {
-        console.log(e);
-        alert("error in user table");
-      }
+      } catch (e) {console.log(e)
+      ;alert('error in user table')}
     }
     fetchData();
   }, [search, status, page]);
 
   const totalPages = Math.ceil(total / limit);
-  const handleApproval = async () => {
-    try {
-      const req = await fetch("/api/admin/instructor");
-    } catch (e) {
-      alert("smo on handle approval");
+  const handleApproval = async()=>{
+    try{
+      const req = await fetch('/api/admin/instructor')
+
+    }catch(e){
+alert('smo on handle approval')
     }
-  };
+
+  }
 
   return (
     <div className="">
@@ -65,20 +65,13 @@ export default function TeacherTable({
           {users.map((user) => (
             <tr key={user.email}>
               <td className="p-2 border">{user.email}</td>
-              <td className="p-2 border text-center">{user.verified}</td>
+              <td className="p-2 border text-center">{user.verified ? "Yes" : "No"}</td>
+              <td className="p-2 border text-center">{user.courses?user.courses.length:0}</td>
               <td className="p-2 border text-center">
-                {user.courses ? user.courses.length : 0}
-              </td>
-              <td className="p-2 border text-center">
-                {user.verified === "approved" ? (
-                  <div>
-                    <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
-                      Block
-                    </button>
-                    <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
-                      Delete
-                    </button>
-                  </div>
+                {user.verified ? (
+                  <button className="bg-red-500 text-white px-2 py-1 rounded">
+                    Block
+                  </button>
                 ) : (
                   <div>
                     <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
