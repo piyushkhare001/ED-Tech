@@ -37,7 +37,7 @@
 // }
 
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";

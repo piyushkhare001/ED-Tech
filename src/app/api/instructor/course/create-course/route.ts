@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path to your course model
-import connectToDatabase from "../../../../../lib/mognodb"; // Ensure you have the MongoDB connection function
+import connectToDatabase from "../../../../../lib/mongodb"; // Ensure you have the MongoDB connection function
 import User from "../../../../../models/User"; // Assuming you have a User model for role validation
 import cloudinary from "../../../../config/cloudinary";
 import { getServerSession } from "next-auth/next";

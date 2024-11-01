@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import OTP from "@/models/Otp";
 import { NextResponse } from "next/server";

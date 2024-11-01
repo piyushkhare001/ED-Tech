@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path as necessary
-import connectToMongoDB from "@/lib/mognodb";
+import connectToMongoDB from "@/lib/mongodb";
 import { Readable } from "stream"; // Import stream to handle file uploads
 import mongoose from "mongoose"; // Import mongoose for ObjectId conversion
 import cloudinary from "../../../../config/cloudinary";

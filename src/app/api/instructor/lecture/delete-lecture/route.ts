@@ -1,7 +1,7 @@
 import cloudinary from "../../../../config/cloudinary"; // Adjust the import path as necessary
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path as necessary
-import connectToMongoDB from "@/lib/mognodb";
+import connectToMongoDB from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 import { Types } from "mongoose";
 
@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
 
     // Get lecture ID from the request body
     const { id, lid } = await req.json(); // Assuming the ID is sent in the body as JSON
-    console.log(id,lid);
-    
+    console.log(id, lid);
+
     // Find the lecture to get its imageUrl before deletion
     const lectureToDelete = await Lecture.findById(new Types.ObjectId(lid));
     if (!lectureToDelete) {
@@ -32,8 +32,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Now delete the lecture from MongoDB
-    const deletedlecture = await Lecture.findByIdAndDelete(new Types.ObjectId(lid));
-    
+    const deletedlecture = await Lecture.findByIdAndDelete(
+      new Types.ObjectId(lid)
+    );
+
     if (!deletedlecture) {
       return NextResponse.json(
         { message: "Failed to delete lecture" },

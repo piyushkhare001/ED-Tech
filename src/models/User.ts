@@ -14,10 +14,10 @@ export interface IUser {
   name?: string;
   email: string;
   password: string;
-
+  collegeName: string;
   otp?: string;
   otpExpiresAt?: Date;
-  role: "student" | "studentPartner" | "admin" | "teacher";
+  role: "student" | "admin" | "teacher";
   verified: string;
   resetPasswordToken?: string;
   resetPasswordExpiresAt?: Date;

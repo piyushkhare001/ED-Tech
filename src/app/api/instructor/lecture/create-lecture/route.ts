@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 import { Course } from "@/models/Course";
 import { getServerSession } from "next-auth/next";
@@ -37,9 +37,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       title,
       duration:Number(duration),
       description,
-      thumbnail:thumbnail,
+      thumbnail: thumbnail,
       hidden,
-      video: video
+      video: video,
     });
 
     await Course.findByIdAndUpdate(courseId, {
