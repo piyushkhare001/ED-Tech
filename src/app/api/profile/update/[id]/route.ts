@@ -1,6 +1,6 @@
 // In your API route file (e.g., /api/profile/update)
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mognodb'; // Adjust path as necessary
+import dbConnect from '@/lib/mongodb'; // Adjust path as necessary
 import Profile from '@/models/Profile'; // Adjust path as necessary
 
 export async function PUT(req : Request, { params }: { params: { id: string } }) {
