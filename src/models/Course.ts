@@ -11,7 +11,7 @@ export interface ICourse {
   purchasedBy: mongoose.Types.ObjectId[];
   certIssued: boolean;
   createdBy: mongoose.Types.ObjectId;
-  publish:boolean;
+  publish: boolean;
 }
 
 const CourseSchema = new mongoose.Schema<ICourse>({
@@ -25,7 +25,7 @@ const CourseSchema = new mongoose.Schema<ICourse>({
   purchasedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   certIssued: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  publish:{type:Boolean,default:false}
+  publish: { type: Boolean, default: false },
 });
 
 export const Course: Model<ICourse> =
