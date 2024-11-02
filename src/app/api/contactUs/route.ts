@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   }
 
   const supportEmail: string =
-    process.env.SupportTeam || "yahyasaads.magic@gmail.com";
+    process.env.SupportTeam || "misterymessage@gmail.com";
 
   try {
     await connectToDatabase();
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (mailSentToSupport.sent && mailSentToSupportTeam.sent) {
       return NextResponse.json({
         success: true,
-        message: "Email sent successfully",
+        message: "Your request has been raised sucessfully",
       });
     } else {
       return NextResponse.json({

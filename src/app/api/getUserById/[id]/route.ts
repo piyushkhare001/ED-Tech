@@ -5,7 +5,7 @@ import User from '@/models/User'; // Import your User model
 
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  // Connect to the database
+  
   await dbConnect();
 
   try {

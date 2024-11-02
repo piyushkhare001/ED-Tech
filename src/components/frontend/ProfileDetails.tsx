@@ -29,7 +29,7 @@ interface SidebarProps {
 
 const ProfileDetails:  React.FC<SidebarProps> = ({ setView  }) => {
   const  session  = useSession();
-
+ const userId = session?.data?.user?.id
  const [userData, setUserData] = useState<User | null>(null);
 
  const handelEdit = async() => {
@@ -41,24 +41,23 @@ const ProfileDetails:  React.FC<SidebarProps> = ({ setView  }) => {
     const fetchUserData = async () => {
       if (session) {
         try {
-          const res = await fetch(`/api/getProfileById/${session?.data?.user?.id}`);
-          if (!res.ok) {
-            console.log('got error at the time of calling api');
-        
-          }
-          const data = await res.json();
-          setUserData(data);
-       
+          const res = await fetch(`/api/getProfileById/${userId}`);
+          const response: User = await res.json();
+          console.log( "response in profile page  " , response)
+          setUserData(response);
         } catch (error : any) {
            console.log('Failed to fetch user data');
        
         }
       }
     };
-    
-    useEffect( () => {
-    fetchUserData()
-    }, [session])
+    console.log('User ID:', session?.data?.user?.id);
+
+    useEffect(() => {
+      if (session && session.data) {
+        fetchUserData();
+      }
+    }, [session]);
   
 
   return (

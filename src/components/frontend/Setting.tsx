@@ -1,78 +1,115 @@
-'use client';
+
 
 import { useState } from 'react';
-import axios from 'axios';
-//import { useSession } from 'next-auth/react';
+
+import { useSession } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast"
 import { signOut } from 'next-auth/react';
 import ConfirmationModal from './ConfirmationModal';
+import axios from 'axios';
 
-interface User {
-  dateOfBirth: string;
-  gender: string;
-  mobile: string;
-  about: string;
-  address: string;
-  collageName: string;
-}
+// interface User {
+//   dateOfBirth: string;
+//   gender: string;
+//   mobile: string;
+//   about: string;
+//   address: string;
+//   collageName: string;
+// }
 
 const Settings = () => {
- // const session = useSession();
+  const session = useSession();
+  const userId = session?.data?.user?.id
+
+
 
   const { toast } = useToast()
-  const [formData, setFormData] = useState<User>({
-    dateOfBirth: '',
-    gender: '',
-    mobile: '',
-    about: '',
-    address: '',
-    collageName: '',
-  });
-
-
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [about, setAbout] = useState('');
+  const [address, setAddress] = useState('');
+  const [collageName, setCollageName] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    switch   
+ (name) {
+      case 'dateOfBirth':
+        setDateOfBirth(value);
+        break;
+      case 'gender':
+        setGender(value);
+        break;
+      case 'mobile':
+        setMobile(value);
+        break;
+      case 'about':
+        setAbout(value);
+        break;
+      case 'address':
+        setAddress(value);
+        break;
+      case 'collageName':
+        setCollageName(value);
+        break;
+      default:
+        break;
+    }
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-     const res =  await axios.put(`/api/profile/update`, formData, {
+      const res =  await fetch(`api/profile/update/${userId}`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          dateOfBirth,
+            address,
+          mobile,
+          about,
+           gender,
+          collageName,
+        }),
       });
-      if(res){
+  
+
+      if (res.status === 200) {
         toast({
-          title: "profile updated succesfully",
-          description: "your  profile data has been updated ",
-        })
+          title: "Profile updated successfully",
+          description: "Your profile data has been updated.",
+        });
+      } else {
+        toast({
+          title: "Profile update failed",
+          description: `An error occurred while updating your profile. Error code: ${res.status}`,
+        });
       }
     } catch (err) {
+      console.error(err); // Log the error for debugging
       toast({
-        title: "profile updation failed",
-        description: "your  profile data did'nt get update ",
-      })
-
+        title: "Profile update failed",
+        description: "An error occurred while updating your profile. Please try again later.",
+      });
     }
-  }
+  };
+
   
 
   const handleCancel = () => {
-    setFormData({
+ 
    
-      dateOfBirth: '',
-      gender: '',
-      mobile: '',
-      about: '',
-      address: '',
-      collageName: '',
-    });
+      setDateOfBirth(''),
+      setGender(''),
+      setAbout(''),
+      setAddress(''),
+      setCollageName(''),
+      setMobile('')
   };
 
 
@@ -123,7 +160,7 @@ const Settings = () => {
             <input
               type="date"
               name="dateOfBirth"
-              value={formData.dateOfBirth || ''}
+              value={dateOfBirth}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
             />
@@ -134,24 +171,26 @@ const Settings = () => {
             <label className="block mb-2 text-gray-700">Gender</label>
             <select
               name="gender"
-              value={formData.gender || ''}
+              value={gender}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
             >
               <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>   
+
             </select>
           </div>
 
           {/* Contact Number */}
           <div>
-            <label className="block mb-2 text-gray-700">Contact Number</label>
+            <label   
+ className="block mb-2 text-gray-700">Contact Number</label>
             <input
               type="text"
               name="mobile"
-              value={formData.mobile || ''}
+              value={mobile}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
               placeholder="Enter Contact Number"
@@ -163,7 +202,7 @@ const Settings = () => {
             <label className="block mb-2 text-gray-700">About</label>
             <textarea
               name="about"
-              value={formData.about}
+              value={about}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
               placeholder="Enter about yourself"
@@ -175,7 +214,7 @@ const Settings = () => {
             <label className="block mb-2 text-gray-700">Address</label>
             <textarea
               name="address"
-              value={formData.address}
+              value={address}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
               placeholder="Enter address details"
@@ -187,14 +226,13 @@ const Settings = () => {
             <label className="block mb-2 text-gray-700">College Name</label>
             <textarea
               name="collageName"
-              value={formData.collageName}
+              value={collageName}
               onChange={handleInputChange}
               className="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-yellow-200"
               placeholder="Enter college details"
             ></textarea>
           </div>
         </div>
-
         <div className="flex justify-end mt-6">
           {/* Cancel button */}
           <button

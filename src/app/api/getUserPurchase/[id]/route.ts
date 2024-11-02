@@ -1,48 +1,24 @@
 import { NextResponse } from 'next/server';
-
 import dbConnect from '@/lib/mognodb'; // Adjust the path as necessary
-import Purchase from '@/models/Purchase'; // Import your User model
-
+import Purchase from '@/models/Purchase'; // Import your Purchase model
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   // Connect to the database
   await dbConnect();
 
   try {
-    const user = await Purchase.findById({ buyerId : params.id}); // Fetch the user by ID
-    if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    // Fetch purchases by buyerId
+    const purchases = await Purchase.find({ buyerId: params.id }).populate('courseId studentPartnerId'); // Populate to get full details
+
+    if (!purchases.length) {
+      return NextResponse.json({ message: 'No purchases found for this user.' }, { status: 404 });
     }
-    console.log( "user details find from getById  ", user )
-    return NextResponse.json(user, { status: 200 });
-  
+
+    console.log("User purchases found: ", purchases);
+    return NextResponse.json(purchases, { status: 200 });
+
   } catch (error) {
+    console.error("Error fetching purchases: ", error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

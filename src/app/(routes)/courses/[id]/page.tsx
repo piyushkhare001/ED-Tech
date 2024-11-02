@@ -7,6 +7,23 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import NavBar from "@/components/frontend/Navbar";
 import Footer from "@/components/frontend/footer";
+import WhyLearn from "@/components/frontend/WhyLearn";
+import CourseHighlights from "@/components/frontend/CourseHighlights";
+import Certification from "@/components/frontend/CertificationDetail";
+import TrainingProcess from "@/components/frontend/TrainingProcess";
+
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBCard,
+  MDBCardBody,
+  MDBCardImage,
+  MDBCardTitle,
+  MDBIcon,
+} from "mdb-react-ui-kit";
+import { Button } from "@/components/ui/button";
+
 type Course = {
   _id: string;
   appxCourseId: string;
@@ -92,10 +109,11 @@ const CourseBuy = () => {
   
     // Check if the response is OK
     if (!response.ok) {
-     
+      const errorData = await response.json();
+      const errorMessage = errorData.message || 'An error occurred';
       setHandleAlert({
         color: "red",
-        message: "user already enroll in this course",
+        message: errorMessage,
         visible: true,
       });
       return;
@@ -180,7 +198,7 @@ const CourseBuy = () => {
    else{
     setHandleAlert({
       color: "red",
-      message: "you are not login please login first",
+      message: "you are not login or you can be teacher",
       visible: true,
     });
    }
@@ -193,44 +211,86 @@ const CourseBuy = () => {
   return (
     <>
     <NavBar/>
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="p-8 bg-gray-100 min-h-screen flex flex-col items-center bg-gradient-to-r from-green-100 to-purple-100">
           <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}
           color={handleAlert.color}
         />
-      {/* Course Banner */}
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        {course?.imageUrl && (
-          <img src={course.imageUrl} alt={course.title} className="w-full h-64 object-cover" />
-        )}
-        {/* Course Details */}
-        <div className="p-6">
-          <h1 className="text-3xl font-bold mb-4 text-black">{course?.title}</h1>
-          <p className="text-gray-600 mb-4">{course?.description}</p>
+        <MDBContainer fluid className="my-5 border w-[36rem]  border-gray-300 rounded-lg p-5 bg-white">
+      <MDBRow className="justify-content-center">
+        <MDBCol md="6">
+          <MDBCard className="text-black">
+            <MDBIcon fab icon="apple" size="lg" className="px-3 pt-3 pb-2" />
+            <MDBCardImage
+            className="w-[30rem] ml-5 p-5 rounded-xl border"
+             src={course?.imageUrl}
+              position="top"
+              alt="Apple Computer"
+            />
+            <MDBCardBody>
+              <div className="text-center">
+                <MDBCardTitle className="text-2xl">{course?.title}</MDBCardTitle>
+                <p className="mb-4">{course?.description}</p>
+              </div>
+              <div>
+              <span
+      className={`inline-block  ml-[12.5rem] px-2 py-1 rounded text-sm font-medium ${
+        course?.openToEveryone ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      }`}
+    >
+      {course?.openToEveryone ? 'Open to Everyone' : 'Restricted Access'}
+    </span>
+            
+              </div>
+            </MDBCardBody>
+          </MDBCard>
+        </MDBCol>
 
-          <div className="flex items-center justify-between mb-6">
-            <span
-              className={`inline-block px-2 py-1 rounded text-sm font-medium ${
-                course?.openToEveryone ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}
-            >
-              {course?.openToEveryone ? 'Open to Everyone' : 'Restricted Access'}
-            </span>
-          </div>
+      </MDBRow>
+      <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Checkout</h1>
 
-          {/* Price & Purchase Button */}
-          <div className="flex items-center justify-between">
-            <button
-              className="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
-              onClick={handlePayment} // Placeholder for payment logic
-            >
-              Amount: {course?.price} {' Buy Now'}
-            </button>
-          </div>
+  
+
+      <div className="mb-4">
+        <p className="text-lg font-medium">Promo code / coupon</p>
+        <div className="flex">
+          <input
+            type="text"
+            className="border border-gray-300 rounded-l-md px-4 py-2 w-full"
+        
+          />
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r-md"
+           
+          >
+            Apply
+          </Button>
         </div>
       </div>
+
+      <hr className="my-4" />
+
+      <div className="flex justify-between">
+        <p className="text-lg font-bold">Total</p>
+        <p className="text-lg">RS. {course?.price}</p>
+      </div>
     </div>
+      <Button
+      className="px-6 py-2 ml-[12rem] mt-4 bg-green-600 w-36 text-white rounded-md font-semibold hover:bg-green-700"
+
+      onClick={handlePayment} // Placeholder for payment logic
+    >
+      {'Pay Now'}
+    </Button>
+    </MDBContainer>
+       
+    </div>
+    <CourseHighlights/>
+    <WhyLearn/>
+    <Certification/>
+    <TrainingProcess/>
     <Footer/>
     </>
   );
