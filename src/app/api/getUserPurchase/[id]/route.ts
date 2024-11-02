@@ -1,12 +1,15 @@
+
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mognodb'; // Adjust the path as necessary
+import dbConnect from '@/lib/mongodb'; // Adjust the path as necessary
 import Purchase from '@/models/Purchase'; // Import your Purchase model
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
+
   // Connect to the database
   await dbConnect();
 
   try {
+
     // Fetch purchases by buyerId
     const purchases = await Purchase.find({ buyerId: params.id }).populate('courseId studentPartnerId'); // Populate to get full details
 
@@ -20,5 +23,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error("Error fetching purchases: ", error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+
   }
 }

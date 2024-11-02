@@ -1,9 +1,11 @@
+
 import { NextRequest, NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mognodb'; // Ensure the correct spelling of 'mongodb'
+import connectToDatabase from '@/lib/mongodb'; // Ensure the correct spelling of 'mongodb'
 import UserModel from '@/models/User';
 import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
+
   try {
     // Parse JSON request
     const { token, password } = await req.json();
@@ -25,10 +27,12 @@ export async function POST(req: NextRequest) {
       resetPasswordExpiresAt: { $gt: Date.now() },
     });
 
+
     // If no user found or token is invalid/expired
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
+
         { status: 400 }
       );
     }
@@ -51,8 +55,10 @@ export async function POST(req: NextRequest) {
     );
     
   } catch (error: any) {
+
     // Log the error for debugging purposes
     console.error('Error during password reset:', error.message);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
+
   }
 }

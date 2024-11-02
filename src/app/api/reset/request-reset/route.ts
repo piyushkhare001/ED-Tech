@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import connectToDatabase from "@/lib/mognodb";
+import connectToDatabase from "@/lib/mongodb";
+
 import UserModel from "@/models/User";
 import { generateResetToken } from "@/lib/token";
 import mailSender from "@/lib/utility/mailSender";

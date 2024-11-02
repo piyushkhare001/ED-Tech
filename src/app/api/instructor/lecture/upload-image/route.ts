@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import { Lecture } from "@/models/Lecture";
 import { Course } from "@/models/Course";
 import { getServerSession } from "next-auth/next";
@@ -44,18 +44,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
     };
 
     const thumbnailResponse = await uploadThumbnail(stream);
-    if(lid){
-        const lecture = await Lecture.findByIdAndUpdate({_id:new Types.ObjectId(lid)},{$set:{thumbnail:(thumbnailResponse as { secure_url: string }).secure_url}})
-    }
-        return NextResponse.json(
-          {
-            message: "Image Uploaded Successfully",
-            img: (thumbnailResponse as { secure_url: string }).secure_url,
+    if (lid) {
+      const lecture = await Lecture.findByIdAndUpdate(
+        { _id: new Types.ObjectId(lid) },
+        {
+          $set: {
+            thumbnail: (thumbnailResponse as { secure_url: string }).secure_url,
           },
-          { status: 201 }
-        );
-    
-
+        }
+      );
+    }
+    return NextResponse.json(
+      {
+        message: "Image Uploaded Successfully",
+        img: (thumbnailResponse as { secure_url: string }).secure_url,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
 

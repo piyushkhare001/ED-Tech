@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "../../../../../models/Course"; // Adjust the path as necessary
-import connectToMongoDB from "@/lib/mognodb";
+import connectToMongoDB from "@/lib/mongodb";
 import { Readable } from "stream"; // Import stream to handle file uploads
 import mongoose from "mongoose"; // Import mongoose for ObjectId conversion
 import cloudinary from "../../../../config/cloudinary";
@@ -70,17 +70,18 @@ export async function POST(req: NextRequest) {
     const openToEveryone = formData.get("openToEveryone");
     const price = formData.get("price");
     const publish = formData.get("publish");
-    const lectures = formData.get("lectures")||[] ; // Assuming content is sent in the form data as an array of ObjectId strings
+    const lectures = formData.get("lectures") || []; // Assuming content is sent in the form data as an array of ObjectId strings
 
-    
     if (title) updatedData.title = title;
     if (appxCourseId) updatedData.appxCourseId = appxCourseId;
     if (description) updatedData.description = description;
-    if (openToEveryone !== null) updatedData.openToEveryone = openToEveryone==='true'?true:false;
-    if (publish !== null) updatedData.publish = publish==='true'?true:false;
+    if (openToEveryone !== null)
+      updatedData.openToEveryone = openToEveryone === "true" ? true : false;
+    if (publish !== null)
+      updatedData.publish = publish === "true" ? true : false;
     if (price) updatedData.price = price;
 
-    if (lectures && lectures.length !=0) {
+    if (lectures && lectures.length != 0) {
       updatedData.content = Array.isArray(lectures)
         ? lectures.map((id) => new mongoose.Types.ObjectId(id))
         : [];

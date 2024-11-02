@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mognodb";
+import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import otpGenerator from "otp-generator";
 import OTP from "@/models/Otp";

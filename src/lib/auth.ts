@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { User } from "../models/User";
-import dbConnect from "../lib/mognodb";
+import dbConnect from "./mongodb";
 
 declare module "next-auth" {
   interface User {
@@ -56,11 +56,15 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+
         // if(user.role=='teacher'){
         //   if(user.verified !=true){
         //     throw new Error("Teacher account not verified");
         //   }
         // }
+
+    
+
 
         return {
           id: user._id.toString(),
@@ -78,8 +82,7 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role; // Add role to token
       }
       console.log("Generated JWT Token:", token); // Debugging line
-    return token;
-
+      return token;
     },
     async session({ session, token }) {
       if (session.user) {

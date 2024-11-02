@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import User from "../../../../models/User"; // Assuming your User schema is inside models/User.ts
-import connectToMongoDB from "@/lib/mognodb";
+import connectToMongoDB from "@/lib/mongodb";
 import { Types } from "mongoose";
 
 // Connect to the database
