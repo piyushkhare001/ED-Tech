@@ -1,10 +1,13 @@
 // src/app/components/TeacherTable.tsx
 import { useEffect, useState } from "react";
+import Alert from "../ui/alertTeacherCourse";
+import { useRouter } from "next/navigation";
 
 interface User {
   email: string;
   verified: string;
   courses: any;
+  _id: string;
 }
 
 interface UserTableProps {
@@ -23,35 +26,117 @@ export default function TeacherTable({
   const [users, setUsers] = useState<User[]>([]);
   const [total, setTotal] = useState(0);
   const limit = 10;
+  const [handleAlert, setHandleAlert] = useState({
+    color: "",
+    message: "",
+    visible: false,
+  });
+  const route = useRouter();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(
-          `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
-        );
-        const data = await response.json();
-        setUsers(data.data);
-        setTotal(data.total);
-      } catch (e) {
-        console.log(e);
-        alert("error in user table");
-      }
+  async function fetchData() {
+    try {
+      const response = await fetch(
+        `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
+      );
+      const data = await response.json();
+      setUsers(data.data);
+      setTotal(data.total);
+    } catch (e) {
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
     }
+  }
+  useEffect(() => {
     fetchData();
   }, [search, status, page]);
 
   const totalPages = Math.ceil(total / limit);
-  const handleApproval = async () => {
+
+  const handleApproval = async (id: string, action: string) => {
     try {
-      const req = await fetch("/api/admin/instructor");
+      const req = await fetch("/api/admin/instructor", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          action,
+        }),
+      });
+      const data = await req.json();
+      console.log(data);
+
+      if (req.status === 201) {
+        setHandleAlert({
+          color: "green",
+          message: data.message,
+          visible: true,
+        });
+        fetchData();
+        return;
+      }
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
     } catch (e) {
-      alert("smo on handle approval");
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
     }
   };
+  // const handleDecline = async (id: string) => {
+  //   try {
+  //     const req = await fetch("/api/admin/instructor", {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         id: id,
+  //         action: "approved",
+  //       }),
+  //     });
+  //     const data = await req.json();
+  //     console.log(data);
+
+  //     if (req.status === 201) {
+  //       setHandleAlert({
+  //         color: "green",
+  //         message: data.message,
+  //         visible: true,
+  //       });
+  //       fetchData();
+  //       return;
+  //     }
+  //     setHandleAlert({
+  //       color: "red",
+  //       message: "An error occurred in Server kindly try again",
+  //       visible: true,
+  //     });
+  //   } catch (e) {
+  //     setHandleAlert({
+  //       color: "red",
+  //       message: "An error occurred in Server kindly try again",
+  //       visible: true,
+  //     });
+  //   }
+  // };
 
   return (
     <div className="">
+      <Alert
+        message={handleAlert.message}
+        visible={handleAlert.visible}
+        color={handleAlert.color}
+      />
       <table className="table-auto w-full rounded-md shadow-md border">
         <thead>
           <tr className="bg-gray-200">
@@ -72,8 +157,8 @@ export default function TeacherTable({
               <td className="p-2 border text-center">
                 {user.verified === "approved" ? (
                   <div>
-                    <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
-                      Block
+                    <button onClick={()=>route.push(`/admin/courses?id=${user._id}`)} className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
+                      View Courses
                     </button>
                     <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
                       Delete
@@ -81,10 +166,17 @@ export default function TeacherTable({
                   </div>
                 ) : (
                   <div>
-                    <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
+                    <button
+                      onClick={() => {
+                        handleApproval(user._id, "approved");
+                      }}
+                      className="bg-green-500 text-white px-2 py-1 mr-2 rounded"
+                    >
                       Approve
                     </button>
-                    <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
+                    <button onClick={() => {
+                        handleApproval(user._id, "decline");
+                      }} className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
                       Decline
                     </button>
                   </div>

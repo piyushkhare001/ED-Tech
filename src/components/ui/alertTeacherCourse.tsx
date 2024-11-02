@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function Alert({ color = "blue", message, visible }) {
-  const [isVisible, setIsVisible] = useState(visible);
-
-  useEffect(() => {
-    setIsVisible(visible); // Update visibility if the prop changes
-  }, [visible]);
-
-  if (!isVisible) return null; // Don't render if the alert is not visible
+export default function Alert({ color = "blue", message, visible,setIsVisible }) {
 
   const alertColors = {
     blue: "bg-blue-500",
@@ -21,12 +14,12 @@ export default function Alert({ color = "blue", message, visible }) {
 
   return (
     <div
-      className={`fixed z-[1000] top-24 right-4 w-1/3 ${selectedColor} text-white px-4 py-3 rounded shadow-lg`}
+      className={`fixed z-[1000] ${visible?'':'hidden'} top-24 right-4 w-1/3 ${selectedColor} text-white px-4 py-3 rounded shadow-lg`}
     >
       <div className="flex justify-between items-center">
         <p>{message}</p>
         <button
-          onClick={() => setIsVisible(false)}
+          onClick={() => setIsVisible({...visible,visible:false})}
           className="text-white hover:text-gray-300 focus:outline-none"
         >
           <svg

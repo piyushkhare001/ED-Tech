@@ -19,7 +19,7 @@ interface Lecture {
   thumbnail: string;
   createdAt: Date;
   video: string;
-  duration:number;
+  duration: number;
   _id: string;
 }
 
@@ -76,11 +76,11 @@ const Course = () => {
     formData.append("hidden", lHidden == false ? "false" : "true");
     formData.append("courseId", id);
 
-    let search = new URL(window.location.href).search.split("&");
-    if (!search[1]) {
-      search[1] = "";
+    let search = new URL(window.location.href).searchParams.get("lid");
+    if (!search) {
+      search = "";
     }
-    if (lid === "" && search[1].slice(0, 3) !== "lid") {
+    if (lid === "" && !search) {
       try {
         const req = await fetch("/api/instructor/lecture/create-lecture", {
           method: "POST",
@@ -111,9 +111,9 @@ const Course = () => {
           visible: true,
         });
       }
-    } else if (lid !== "" || search[1].slice(0, 3) === "lid") {
+    } else if (lid !== "" || search) {
       try {
-        formData.append("lectureId", lid ? lid : search[1].slice(4));
+        formData.append("lectureId", lid ? lid : search);
         const req = await fetch("/api/instructor/lecture/update-lecture", {
           method: "PUT",
           body: formData,
@@ -158,9 +158,9 @@ const Course = () => {
       const formData = new FormData();
       formData.append("thumbnail", e.target.files[0]);
 
-      const search = new URL(window.location.href).search.split("&");
-      if (lid || search[1]) {
-        formData.append("lid", lid || search[1].slice(4));
+      const search = new URL(window.location.href).searchParams.get("lid");
+      if (lid || search) {
+        formData.append("lid", lid || String(search));
       }
       const req = await fetch("/api/instructor/lecture/upload-image", {
         method: "POST",
@@ -185,9 +185,9 @@ const Course = () => {
     if (e.target.files && e.target.files.length > 0) {
       const formData = new FormData();
       formData.append("file", e.target.files[0]);
-      const search = new URL(window.location.href).search.split("&");
-      if (lid || search[1]) {
-        formData.append("lid", lid || search[1].slice(4));
+      const search = new URL(window.location.href).searchParams.get("lid");
+      if (lid || search) {
+        formData.append("lid", lid || String(search));
       } else {
         return;
       }
@@ -231,46 +231,40 @@ const Course = () => {
   };
   const handleLocationDraft = async (lectid: any) => {
     try {
-      const search = new URL(window.location.href).search.split("&");
-      if (search) {
-        if (search[0].slice(0, 3) == "?id") {
-          const id = search[0].slice(4);
-          const req = await fetch(`/api/instructor/course`, {
-            method: "POST",
-            body: JSON.stringify({ id }),
-            headers: { "Content-Type": "multipart/" },
-          });
-          const res = await req.json();
-          console.log(res.lectures);
+      const id = new URL(window.location.href).searchParams.get("id");
+      const lid = new URL(window.location.href).searchParams.get("lid");
+      if (id) {
+        const req = await fetch(`/api/instructor/course`, {
+          method: "POST",
+          body: JSON.stringify({ id }),
+          headers: { "Content-Type": "multipart/" },
+        });
+        const res = await req.json();
+        console.log(res.lectures);
 
-          if (res.course) {
-            setDrafted(true);
-            setTitle(res.course.title);
-            setDescription(res.course.description);
-            setCoursePrice(res.course.price);
-            setOpenToEveryone(res.course.openToEveryone);
-            setPublish(res.course.publish);
-            setThumbnailLink(res.course.imageUrl);
-            setId(res.course._id);
-            setLectures(res.lectures);
-          } else {
-            await route.push("/instructor/course");
-            setHandleAlert({
-              color: "red",
-              message: "Error from server while loading course",
-              visible: true,
-            });
-          }
+        if (res.course) {
+          setDrafted(true);
+          setTitle(res.course.title);
+          setDescription(res.course.description);
+          setCoursePrice(res.course.price);
+          setOpenToEveryone(res.course.openToEveryone);
+          setPublish(res.course.publish);
+          setThumbnailLink(res.course.imageUrl);
+          setId(res.course._id);
+          setLectures(res.lectures);
+        } else {
+          await route.push("/instructor/course");
+          setHandleAlert({
+            color: "red",
+            message: "Error from server while loading course",
+            visible: true,
+          });
         }
 
-        if (search[1] || lectid) {
-          let id = lectid;
-          if (!lectid) {
-            id = search[1].slice(4);
-          }
+        if (lid || lectid) {
           const req = await fetch(`/api/instructor/lecture`, {
             method: "POST",
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id: lid || lectid }),
             headers: { "Content-Type": "application/json" },
           });
           const res = await req.json();
@@ -296,8 +290,6 @@ const Course = () => {
         setLoader(false);
       }
     } catch (e) {
-      console.log(e);
-
       setHandleAlert({
         color: "red",
         message: "Something went worng in server.",
@@ -342,9 +334,8 @@ const Course = () => {
         setButtonLoader({ id: 1, status: false });
         if (req.status == 201) {
           setDrafted(true);
-          setThumbnailLink(res.course.imageUrl || "");
-          setPublish(res.course.publish);
-          setThumbnailLink(res.course.imageUrl);
+          setThumbnailLink(res.course.imageUrl ? res.course.imageUrl : "");
+          setThumbnail(null);
           setId(res.course._id);
           setLectures(res.lectures);
           route.push(`/instructor/course?id=${res.course._id}`);
@@ -371,14 +362,19 @@ const Course = () => {
         });
 
         const res = await req.json();
-        console.log(res);
-        setButtonLoader({ id: 1, status: false });
 
+        setButtonLoader({ id: 1, status: false });
         if (req.status == 200) {
           setDrafted(true);
-          setThumbnailLink(res.imageUrl ? res.imageUrl : "");
-          setPublish(res.publish ? true : false);
-          setId(res._id);
+          setThumbnail(null);
+          setThumbnailLink(
+            res.thumbnailLink
+              ? res.thumbnailLink
+              : res.course.imageUrl
+              ? res.course.imageUrl
+              : ""
+          );
+          setId(res.course._id);
           setLectures(res.lectures);
           return setHandleAlert({
             color: "green",
@@ -395,6 +391,7 @@ const Course = () => {
       });
     }
   };
+
   const handleCourseDelete = async (id: any) => {
     setHandleAlert({
       message: "Deleting process will take time please wait.",
@@ -463,6 +460,7 @@ const Course = () => {
           message={handleAlert.message}
           visible={handleAlert.visible}
           color={handleAlert.color}
+          setIsVisible={setHandleAlert}
         />
         {/* Modal */}
         <>
@@ -912,7 +910,7 @@ const Course = () => {
                   {/* Lecture check box*/}
                   <div className="w-1/2">
                     <div className="flex my-4">
-                    <div className="">
+                      <div className="">
                         <label
                           className="block text-gray-900 mb-2"
                           htmlFor="category"
@@ -968,7 +966,6 @@ const Course = () => {
                           </h4>
                         </div>
                       </div>
-                      
                     </div>
                     <div className="mb-4">
                       <div className="flex">
@@ -1049,13 +1046,12 @@ const Course = () => {
                                         : null}
                                     </h3>
                                     <div className="flex">
-                                    <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
-                                      {e.type}
-                                    </h3>
-                                    <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
-                                      {e.duration} {e.duration?'Mins':''}
-                                    </h3>
-
+                                      <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
+                                        {e.type}
+                                      </h3>
+                                      <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
+                                        {e.duration} {e.duration ? "Mins" : ""}
+                                      </h3>
                                     </div>
                                   </div>
                                   <div className="flex w-64">

@@ -1,86 +1,127 @@
-// src/app/components/TeacherTable.tsx
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-interface User {
-  email: string;
-  verified: boolean;
-  courses: any;
+interface Course {
+  _id: string;
+  title: string;
+  imageUrl?: string;
+  description?: string;
+  openToEveryone: boolean;
+  price: number;
+  publish: boolean;
 }
 
-interface UserTableProps {
+interface CourseTableProps {
   search: string;
-  status: string;
   page: number;
+  id: string;
   setPage: (page: number) => void;
 }
 
-export default function TeacherTable({
+export default function CourseTable({
   search,
-  status,
   page,
+  id,
   setPage,
-}: UserTableProps) {
-  const [users, setUsers] = useState<User[]>([]);
+}: CourseTableProps) {
+  const [courses, setCourses] = useState<Course[]>([]);
   const [total, setTotal] = useState(0);
   const limit = 10;
+  const route = useRouter();
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCourses() {
       try {
         const response = await fetch(
-          `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
+          `/api/course/search?id=${id}&title=${search}`
         );
         const data = await response.json();
-        setUsers(data.data)
-        setTotal(data.total);
-      } catch (e) {console.log(e)
-      ;alert('error in user table')}
+
+        if (data.data) {
+          setCourses(data.data);
+          setTotal(data.totalPages);
+        } else {
+          // route.push('/')
+        }
+      } catch (e) {
+        alert("Error loading courses");
+      }
     }
-    fetchData();
-  }, [search, status, page]);
+    fetchCourses();
+  }, [search, page]);
 
   const totalPages = Math.ceil(total / limit);
-  const handleApproval = async()=>{
-    try{
-      const req = await fetch('/api/admin/instructor')
-
-    }catch(e){
-alert('smo on handle approval')
-    }
-
-  }
 
   return (
-    <div className="">
+    <div className="overflow-x-auto">
       <table className="table-auto w-full rounded-md shadow-md border">
         <thead>
           <tr className="bg-gray-200">
-            <th className="p-2 border">Email</th>
-            <th className="p-2 border">Verified</th>
-            <th className="p-2 border">Courses</th>
+            <th className="p-2 border">Title</th>
+            <th className="p-2 border">Created By</th>
+            <th className="p-2 border">Description</th>
+            <th className="p-2 border">Image</th>
+            <th className="p-2 border">Price</th>
+            <th className="p-2 border">Open to Everyone</th>
+            <th className="p-2 border">Published</th>
             <th className="p-2 border">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.email}>
-              <td className="p-2 border">{user.email}</td>
-              <td className="p-2 border text-center">{user.verified ? "Yes" : "No"}</td>
-              <td className="p-2 border text-center">{user.courses?user.courses.length:0}</td>
+          {courses.map((course) => (
+            <tr key={course._id}>
+              <td
+                className="p-2 border cursor-pointer"
+                onClick={() => {
+                  route.push(`/admin/course?id=${course._id}`);
+                }}
+              >
+                {course.title}
+              </td>
+              <td className="p-2 border text-center">{course._id}</td>
+              <td className="p-2 border">
+                {course.description?.slice(0, 50)}
+                {String(course.description)?.length > 50 ? "..." : ""}
+              </td>
+              <td className="p-2 border">
+                {course.imageUrl ? (
+                  <div className="flex justify-center items-center">
+                    <img
+                      src={course.imageUrl}
+                      alt={course.title}
+                      className="h-12 w-12 object-cover"
+                    />
+                  </div>
+                ) : (
+                  "No Image"
+                )}
+              </td>
+              <td className="p-2 border text-center">Rs. {course.price} /-</td>
               <td className="p-2 border text-center">
-                {user.verified ? (
-                  <button className="bg-red-500 text-white px-2 py-1 rounded">
-                    Block
+                {course.openToEveryone ? "Yes" : "No"}
+              </td>
+              <td className="p-2 border text-center">
+                {course.publish ? "Published" : "Not Published"}
+              </td>
+              <td className="p-2 border text-center">
+                {course.publish ? (
+                  <button
+                    onClick={() => {
+                      route.push(`/admin/course?id=${course._id}`);
+                    }}
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Unpublish
                   </button>
                 ) : (
-                  <div>
-                    <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
-                      Approve
-                    </button>
-                    <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
-                      Decline
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      route.push(`/admin/course?id=${course._id}`);
+                    }}
+                    className="bg-green-500 text-white px-2 py-1 rounded"
+                  >
+                    Publish
+                  </button>
                 )}
               </td>
             </tr>
