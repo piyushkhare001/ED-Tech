@@ -1,16 +1,19 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import Sidebar from "./Sidebar";
+//import Link from "next/link";
+import React, { useEffect, useState } from "react";
+
 import Alert from "@/components/ui/alertTeacherCourse";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
+//import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
+// import DocumentEditor from "@/components/ui/documentEditor";
+//import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
-import "../../app/g.css";
-import Navbar from "@/components/frontend/Navbar";
-import removeHtmlTags from "@/lib/utility/removeHTML";
 
+//import Navbar from "@/components/frontend/Navbar";
+import removeHtmlTags from "@/lib/utility/removeHTML";
 interface Lecture {
   type: string;
   title: string;
@@ -23,11 +26,12 @@ interface Lecture {
   _id: string;
 }
 
-const Course = () => {
+const AddCourse = () => {
   const route = useRouter();
   const [coursePrice, setCoursePrice] = useState("0");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [openToEveryone, setOpenToEveryone] = useState(false);
   const [publish, setPublish] = useState(false);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -199,7 +203,7 @@ const Course = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-            onUploadProgress: (progressEvent: any) => {
+            onUploadProgress: (progressEvent:any) => {
               const percentCompleted = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
               );
@@ -309,6 +313,7 @@ const Course = () => {
       const formData = new FormData();
       formData.append("title", title); // Assuming title is a state variable
       formData.append("description", description); // Assuming description is a state variable
+      formData.append("category", category); // Assuming category is a state variable
       formData.append("price", coursePrice); // Assuming coursePrice is a state variable
       formData.append("openToEveryone", String(openToEveryone));
       formData.append("publish", String(publish));
@@ -453,9 +458,10 @@ const Course = () => {
   };
   return (
     <>
-      <Navbar />
+      
       <div className="min-h-screen flex bg-white">
         {/* Sidebar */}
+       
         <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}
@@ -899,13 +905,10 @@ const Course = () => {
                       Lecture Description{" "}
                       <span className="text-red-500"> *</span>
                     </label>
-                    <textarea
-                      placeholder="Enter Description"
-                      className="w-full p-3 rounded-lg bg-gray-100 shadow-md text-gray-900 border border-gray-700 focus:border-yellow-500 focus:outline-none"
-                      rows={8}
-                      value={lDescription}
-                      onChange={(e) => setlDescription(e.target.value)}
-                    ></textarea>{" "}
+                    {/* <DocumentEditor
+                      content={lDescription}
+                      setContent={setlDescription}
+                    /> */}
                   </div>
                   {/* Lecture check box*/}
                   <div className="w-1/2">
@@ -1212,4 +1215,4 @@ const Course = () => {
   );
 };
 
-export default Course;
+export default AddCourse;

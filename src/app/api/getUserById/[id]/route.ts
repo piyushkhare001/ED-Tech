@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb"; // Adjust the path as necessary
 import User from "@/models/User"; // Import your User model
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  // Connect to the database
+
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  
+
   await dbConnect();
 
   try {

@@ -1,5 +1,7 @@
 "use client";
 
+import Footer from "@/components/frontend/footer";
+import NavBar from "@/components/frontend/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,12 +25,24 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     try {
-      // Implement your password reset API call here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated API call
+      const response = await fetch("/api/reset/request-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      setError(null);
-      setSuccess("Password reset link has been sent to your email address.");
-      setEmail("");
+      const res = await response.json();
+
+      if (response.ok) {
+        setError(null);
+        setSuccess("Password reset link has been sent to your email address.");
+        setEmail("");
+      } else {
+        setError(res.error || "Failed to send reset link. Please try again.");
+        setSuccess(null);
+      }
     } catch (err) {
       setError("Failed to send reset link. Please try again.");
       setSuccess(null);
@@ -38,50 +52,53 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Forgot Password?</h2>
-        <p className="text-gray-600 mt-2">
-          Enter your email to reset your password.
-        </p>
-      </div>
+    <>
+      <NavBar />
+      <div className="max-w-md mx-auto m-16 p-6 bg-white rounded-lg shadow-md">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Forgot Password?</h2>
+          <p className="text-gray-600 mt-2">
+            Enter your email to reset your password.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email address</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500"
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email address</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+            />
+          </div>
+
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+          {success && <div className="text-blue-500 text-sm mt-2">{success}</div>}
+
+          <Button
+            type="submit"
             disabled={isLoading}
-          />
-        </div>
-
-        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-
-        {success && <div className="text-blue-500 text-sm mt-2">{success}</div>}
-
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-md  focus:outline-none focus:ring-2  focus:ring-offset-2"
-        >
-          {isLoading ? "Sending..." : "Send Reset Link"}
-        </Button>
-
-        <div className="text-center mt-4">
-          <a
-            href="/signin"
-            className="text-sm text-emerald-600 hover:text-emerald-500"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
-            Back to Sign In
-          </a>
-        </div>
-      </form>
-    </div>
+            {isLoading ? "Sending..." : "Send Reset Link"}
+          </Button>
+
+          <div className="text-center mt-4">
+            <a
+              href="/signin"
+              className="text-sm text-emerald-600 hover:text-emerald-500"
+            >
+              Back to Sign In
+            </a>
+          </div>
+        </form>
+      </div>
+      <Footer />
+    </>
   );
 };
 

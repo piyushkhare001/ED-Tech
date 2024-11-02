@@ -13,7 +13,8 @@ import Sidebar from '@/components/frontend/Sidebar';
 import ProfileDetails from '@/components/frontend/ProfileDetails';
 import LoadingPage from '../loading/page';
 import MyCourses from '@/components/frontend/Mycourses';
-import Course from '@/components/frontend/Course';
+import NavBar from '@/components/frontend/Navbar';
+
 //import Navbar from '@/components/frontend/Navbar';
 export default function DashboardPage() {
 
@@ -40,7 +41,9 @@ console.log("session" , session)
     if (session) {
         return (
             <div>
+<NavBar/>
               <div className="flex">
+         
               <Sidebar setView={setView} currentView={view} />
 
               <div className="flex-grow p-4">
@@ -51,7 +54,7 @@ console.log("session" , session)
         {view === 'studentPartner' && <StudentPartner />}
         {view === 'Mycourses' && <MyCourses/>}
         {view === 'profile' && <ProfileDetails setView={setView}/>} 
-        {view === 'addCourse' && <Course/>}
+
        </div>
      
     </div>
@@ -62,5 +65,4 @@ console.log("session" , session)
     }
 
     return null;
-
 }
