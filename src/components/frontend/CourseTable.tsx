@@ -30,6 +30,7 @@ export default function CourseTable({
   const route = useRouter();
 
   useEffect(() => {
+    setCourses([]);
     async function fetchCourses() {
       try {
         const response = await fetch(

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
 //import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
-// import DocumentEditor from "@/components/ui/documentEditor";
 //import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
@@ -95,7 +94,7 @@ const AddCourse = () => {
         if (req.status == 200) {
           route.push(`/instructor/course?id=${id}&lid=${res.lecture._id}`);
           setlid(res._id);
-          handleLocationDraft(null);
+          handleLocationDraft(res.lecture._id);
           setHandleAlert({
             color: "green",
             message: res.message,
@@ -203,7 +202,7 @@ const AddCourse = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-            onUploadProgress: (progressEvent:any) => {
+            onUploadProgress: (progressEvent: any) => {
               const percentCompleted = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
               );
@@ -306,7 +305,7 @@ const AddCourse = () => {
     setLoader(true);
     handleLocationDraft(null);
     setLoader(false);
-  }, [status]);
+  }, []);
 
   const handleDraft = async (publish = false) => {
     try {
@@ -360,7 +359,6 @@ const AddCourse = () => {
       }
       if (id) {
         formData.append("id", id);
-        console.log(id);
         const req = await fetch("/api/instructor/course/update-course", {
           method: "POST",
           body: formData,
@@ -458,10 +456,9 @@ const AddCourse = () => {
   };
   return (
     <>
-      
       <div className="min-h-screen flex bg-white">
         {/* Sidebar */}
-       
+
         <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}
@@ -586,7 +583,7 @@ const AddCourse = () => {
                     className={`w-10 h-10 rounded-full bg-gray-${
                       status === 3 ? "900" : "500"
                     } flex items-center justify-center text-white cursor-pointer`}
-                    onClick={(e) => setstatus(3)}
+                    onClick={(e) => {setstatus(3);handleLocationDraft(null)}}
                   >
                     3
                   </div>
@@ -905,10 +902,13 @@ const AddCourse = () => {
                       Lecture Description{" "}
                       <span className="text-red-500"> *</span>
                     </label>
-                    {/* <DocumentEditor
-                      content={lDescription}
-                      setContent={setlDescription}
-                    /> */}
+                    <textarea
+                      placeholder="Enter Description"
+                      className="w-full p-3 rounded-lg bg-gray-100 shadow-md text-gray-900 border border-gray-700 focus:border-yellow-500 focus:outline-none"
+                      rows={8}
+                      value={lDescription}
+                      onChange={(e) => setlDescription(e.target.value)}
+                    ></textarea>{" "}
                   </div>
                   {/* Lecture check box*/}
                   <div className="w-1/2">
@@ -1011,89 +1011,94 @@ const AddCourse = () => {
               ) : status === 3 ? (
                 <div className="w-full mt-24">
                   <ul className="w-full">
-                    {lectures
-                      ? lectures.map((e, i) => {
-                          return (
-                            <>
-                              <li
-                                className="text-gray-100 md:flex w-full mb-6"
-                                key={String(Date.now()) + e._id}
-                              >
-                                <div>
-                                  {e.thumbnail ? (
-                                    <img
-                                      src={e.thumbnail}
-                                      alt=""
-                                      className="max-w-64 w-64 max-h-1/2 rounded-md"
-                                    />
-                                  ) : (
-                                    <div className="max-w-64 min-w-64 w-64 h-32 flex justify-center items-center">
-                                      <IoCode className="text-gray-900 w-5 h-5" />
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex flex-col md:mx-10 justify-between w-full">
-                                  <div>
-                                    <h3 className="text-xl mt-2 text-gray-900 font-bold">
-                                      {e.title || "Untitled Lecture"}
-                                    </h3>
-                                    <h3 className="text-md text-gray-900">
-                                      {String(
-                                        removeHtmlTags(
-                                          e.description || "No Description "
-                                        )
-                                      ).slice(0, 150)}
-                                      {String(removeHtmlTags(e.description))
-                                        .length > 150
-                                        ? "..."
-                                        : null}
-                                    </h3>
-                                    <div className="flex">
-                                      <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
-                                        {e.type}
-                                      </h3>
-                                      <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
-                                        {e.duration} {e.duration ? "Mins" : ""}
-                                      </h3>
-                                    </div>
-                                  </div>
-                                  <div className="flex w-64">
-                                    <button
-                                      className="m-2 mx-0 w-full py-2 rounded bg-green-500 "
-                                      onClick={(ele) => {
-                                        route.push(
-                                          `/instructor/course?id=${id}&lid=${e._id}`
-                                        );
-                                        handleLocationDraft(e._id);
-                                        setstatus(2);
-                                      }}
-                                    >
-                                      Update
-                                    </button>
-                                    <button
-                                      className="m-2 w-full py-2 rounded bg-red-500 "
-                                      onClick={(ele) =>
-                                        setModalState({
-                                          desc: "Are Sure you want to delete this Lecture once the Lecture been deleted it can not be retrived.",
-                                          isOpen: true,
-                                          title: "Delete Lecture",
-                                          id: String(e._id),
-                                          couse: false,
-                                        })
-                                      }
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
-                                </div>
-                              </li>
+                    {lectures.map((e, i) => {
+                      return (
+                        <React.Fragment key={e._id}>
+                          <li
+                            className="text-gray-100 md:flex w-full mb-6"
+                            key={e._id}
+                          >
+                            <div>
                               {e.thumbnail ? (
-                                <hr className="w-full m-2 mb-6" />
-                              ) : null}
-                            </>
-                          );
-                        })
-                      : null}
+                                <img
+                                  src={e.thumbnail}
+                                  alt=""
+                                  className="max-w-64 w-64 max-h-1/2 rounded-md"
+                                />
+                              ) : (
+                                <div className="max-w-64 min-w-64 w-64 h-32 flex justify-center items-center">
+                                  <IoCode className="text-gray-900 w-5 h-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex flex-col md:mx-10 justify-between w-full">
+                              <div>
+                                <h3 className="text-xl mt-2 text-gray-900 font-bold">
+                                  {e.title || "Untitled Lecture"}
+                                </h3>
+                                <h3 className="text-md text-gray-900">
+                                  {String(
+                                    removeHtmlTags(
+                                      e.description || "No Description "
+                                    )
+                                  ).slice(0, 150)}
+                                  {String(removeHtmlTags(e.description))
+                                    .length > 150
+                                    ? "..."
+                                    : null}
+                                </h3>
+                                <div className="flex">
+                                  <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
+                                    {e.type}
+                                  </h3>
+                                  <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
+                                    {e.duration} {e.duration ? "Mins" : ""}
+                                  </h3>
+                                </div>
+                              </div>
+                              <div className="flex w-64">
+                                <button
+                                  className="m-2 mx-0 w-full py-2 rounded bg-green-500 "
+                                  onClick={(ele) => {
+                                    route.push(
+                                      `/instructor/course?id=${id}&lid=${e._id}`
+                                    );
+                                    setlTitle(e.title);
+                                    setlDuration(String(e.duration));
+                                    setlType(e.type);
+                                    setlHidden(e.hidden);
+                                    setlDescription(e.description);
+                                    setlThumbnailLink(e.thumbnail);
+                                    setlVideoLink(e.video);
+                                    setlid(e._id);
+                                    setstatus(2);
+                                  }}
+                                >
+                                  Update
+                                </button>
+                                <button
+                                  className="m-2 w-full py-2 rounded bg-red-500 "
+                                  onClick={(ele) =>
+                                    setModalState({
+                                      desc: "Are Sure you want to delete this Lecture once the Lecture been deleted it can not be retrived.",
+                                      isOpen: true,
+                                      title: "Delete Lecture",
+                                      id: String(e._id),
+                                      couse: false,
+                                    })
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </li>
+                          {e.thumbnail ? (
+                            <hr className="w-full m-2 mb-6" />
+                          ) : null}
+                        </React.Fragment>
+                      );
+                    })}
                     {lectures.length == 0 ? (
                       <li className="text-center flex justify-center items-center p-4 text-gray-800">
                         <h2>No Lecture found</h2>

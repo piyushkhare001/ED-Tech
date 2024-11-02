@@ -136,6 +136,7 @@ export default function TeacherTable({
         message={handleAlert.message}
         visible={handleAlert.visible}
         color={handleAlert.color}
+        setIsVisible={setHandleAlert}
       />
       <table className="table-auto w-full rounded-md shadow-md border">
         <thead>
@@ -157,9 +158,16 @@ export default function TeacherTable({
               <td className="p-2 border text-center">
                 {user.verified === "approved" ? (
                   <div>
-                    <button onClick={()=>route.push(`/admin/courses?id=${user._id}`)} className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
-                      View Courses
-                    </button>
+                    {user.courses.length > 0 ? (
+                      <button
+                        onClick={() =>
+                          route.push(`/admin/courses?id=${user._id}`)
+                        }
+                        className="bg-green-500 text-white px-2 py-1 mr-2 rounded"
+                      >
+                        View Courses
+                      </button>
+                    ) : null}
                     <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
                       Delete
                     </button>
@@ -174,9 +182,12 @@ export default function TeacherTable({
                     >
                       Approve
                     </button>
-                    <button onClick={() => {
+                    <button
+                      onClick={() => {
                         handleApproval(user._id, "decline");
-                      }} className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
+                      }}
+                      className="bg-red-500 text-white px-2 py-1 mr-2 rounded"
+                    >
                       Decline
                     </button>
                   </div>

@@ -61,9 +61,10 @@ export async function PUT(req: NextRequest, res: NextResponse) {
   const description = formData.get("description");
   const video = formData.get("video");
   const thumbnail = formData.get("thumbnail");
+  console.log(thumbnail);
+  
   const type = formData.get("type");
   const hidden = formData.get("hidden") === "true";
-  console.log("duration", duration);
 
   if (!lectureId) {
     return NextResponse.json(
@@ -96,11 +97,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     const updatedLecture = await Lecture.findByIdAndUpdate(
       lectureId,
       { $set: updateFields },
-      { new: true }
     );
-    console.log(updateFields);
-
-    console.log(updatedLecture);
 
     return NextResponse.json({
       success: true,

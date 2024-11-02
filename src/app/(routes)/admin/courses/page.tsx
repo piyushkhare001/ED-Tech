@@ -8,6 +8,10 @@ import React, { useEffect, useState } from "react";
 export default function page() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [id, setid] = useState("");
+  useEffect(() => {
+    setid(String(new URL(window.location.href).searchParams.get("id")));
+  }, []);
 
   return (
     <div>
@@ -23,7 +27,7 @@ export default function page() {
             className="border p-2 rounded"
           />
         </div>
-        <CourseTable search={search} page={page} id={String(new URL(window.location.href).searchParams.get("id"))} setPage={setPage} />
+        <CourseTable search={search} page={page} id={id} setPage={setPage} />
       </div>
     </div>
   );
