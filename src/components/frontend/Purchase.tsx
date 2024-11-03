@@ -36,7 +36,7 @@ const Purchase = () => {
 
   return (
     <div className='ml-64'>
-      <h1 className='font-serif text-black text-4xl m-8'>Purchased Courses</h1>
+      <h1 className='font-serif text-black text-4xl m-8'>Purchased Courses!</h1>
       <p>{}</p>
     </div>
   );
