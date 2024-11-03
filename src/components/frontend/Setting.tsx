@@ -103,9 +103,9 @@ const Settings = () => {
   const [isHovered, setIsHovered] = useState(false);
   console.log(isHovered)
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex flex-col justify-center items-center ml-[205px] min-h-screen bg-gray-100">
       <form
-        className="bg-white text-gray-800 p-8 rounded-lg shadow-lg w-full max-w-2xl"
+        className="bg-white text-gray-800 p-8 rounded-lg shadow-lg w-full mt-4 max-w-2xl"
         onSubmit={handleSubmit}
       >
         <h2 className="text-2xl font-semibold mb-6">Additional Information</h2>
@@ -215,7 +215,7 @@ const Settings = () => {
         </div>
       </form>
 
-      <div className="bg-red-100 text-red-800 p-6 rounded-lg shadow-lg mt-8 max-w-lg mx-auto">
+      <div className="bg-red-100 text-red-800 p-6 rounded-lg shadow-lg mt-8 ml-[40px] mx-auto">
             <div className="flex items-center space-x-4">
                 <div className="text-red-600 text-3xl">
                     <i className="fas fa-trash-alt"></i> {/* Or any delete icon */}

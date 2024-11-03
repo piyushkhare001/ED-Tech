@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Spinner from '../ui/spinner';
 
-const EnrolledCourses: React.FC = () => {
+const  
+EnrolledCourses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

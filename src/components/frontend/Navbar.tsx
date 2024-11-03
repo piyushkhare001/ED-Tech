@@ -5,12 +5,21 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logo.jpeg";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
  const router = useRouter()
   return (
     <nav className="bg-white shadow-md h-[80px]">
@@ -33,9 +42,27 @@ const NavBar: React.FC = () => {
             <a href="/aboutus" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
               About
             </a>
-            <a href="/courses" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
-              Courses
-            </a>
+            <div className="relative">
+              <button
+                onClick={toggleDropdown}
+                className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5 flex items-center"
+              >
+                Courses {isDropdownOpen ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />}
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-50">
+                  <a href="/courses/course1" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Course 1
+                  </a>
+                  <a href="/courses/course2" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Course 2
+                  </a>
+                  <a href="/courses/course3" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Course 3
+                  </a>
+                </div>
+              )}
+            </div>
             <a href="/certificate" className="text-gray-700 hover:text-blue-600 font-medium text-lg pt-5">
               Certificate
             </a>

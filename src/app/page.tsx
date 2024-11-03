@@ -22,8 +22,7 @@ const Home = () => {
       <div className="overflow-x-hidden flex flex-col gap-[100px]">
         <div>
           {/*Navbar section*/}
-          <MobileNav nav={nav} closeNav={closeNav}/>
-          <Navbar openNav={openNav}/>
+          <Navbar/>
           {/*Hero section*/}
           <Hero />
           {/* <Certificate/> */}

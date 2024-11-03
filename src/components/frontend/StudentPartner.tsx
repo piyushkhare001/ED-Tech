@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 const StudentPartner = () => {
   const router = useRouter()
   return (
-    <div>  
+    <div className="ml-60">  
  <Button onClick = { () => {router.push('/dsp/signup')}}>Want to become student partner </Button>
 
     </div>

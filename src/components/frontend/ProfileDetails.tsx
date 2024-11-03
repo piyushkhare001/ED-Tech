@@ -62,12 +62,12 @@ const ProfileDetails:  React.FC<SidebarProps> = ({ setView  }) => {
   
 
   return (
-    <div className="flex-1 p-10">
-      <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+    <div className="flex-1 p-10 overflow-y-auto">
+      <h1 className="ml-[205px] text-2xl font-bold mb-6">My Profile</h1>
 
       <div className="flex items-center mb-6">
         <div className="relative">
-        <div className="flex justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-3xl w-[70rem]">
+        <div className="flex justify-between items-center ml-[205px] bg-white shadow-md rounded-lg p-6 w-[65rem]">
         <div className="flex items-center">
           <Avatar 
             name={userData?.name|| session?.data?.user?.name ||  'Unknown User'} 
@@ -106,7 +106,7 @@ const ProfileDetails:  React.FC<SidebarProps> = ({ setView  }) => {
     
  
       </div>
-      <div className="relative flex justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-3xl mt-4 ">
+      <div className="relative flex justify-between items-center ml-[205px] bg-white shadow-md rounded-lg p-6 mt-4 ">
       {/* About Section */}
       <div className="flex items-center">
         <div className="ml-4">
@@ -139,7 +139,7 @@ onClick={handelEdit}
         </svg>
       </button>
     </div>
-    <div className="relative flex  justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-3xl  mt-4">
+    <div className="relative flex  justify-between items-center ml-[205px] bg-white shadow-md rounded-lg p-6  mt-4">
       <div className='flex flex-col pl-4'>
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Personal Details</h2>
       

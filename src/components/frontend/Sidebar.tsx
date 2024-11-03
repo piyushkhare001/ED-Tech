@@ -20,11 +20,11 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
   }; 
 
   return (
-    <div className="bg-blue-900 text-white w-60 h-screen pl-14 flex flex-col justify-evenly  overflow-y-auto">
+    <div className="bg-teal-500 text-white w-60 fixed h-screen pl-14 flex flex-col justify-evenly">
 
       <div className="flex flex-col">
-        <h2 className="text-xl font-sans text-gray-100">👋 Hi, {session?.data?.user?.name}</h2>
-        <p className="text-lg text-gray-400">{role}</p>
+        <h2 className="text-xl font-sans text-white">👋 Hi, {session?.data?.user?.name}</h2>
+        <p className="text-lg text-black font-medium">{role}</p>
       </div>
 
       <nav>
@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
           {role === 'teacher' && (
             <>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'profile' ? 'text-green-400 ' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'profile' ? 'bg-teal-800 text-white' : 'text-gray-200 hover:text- hover:bg-teal-700'}`}
                 onClick={() => setView('profile')}
               >
                 <div className="flex items-center space-x-2">
@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'Mycourses' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'Mycourses' ? 'bg-teal-800 text-white' : 'text-gray-200 hover:text-white hover:bg-teal-900'}`}
                 onClick={() => setView('Mycourses')}
               >
                 <div className="flex items-center space-x-2">
@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'addCourse' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'addCourse' ? 'text-teal-900' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('addCourse')}
               >
                 <div className="flex items-center space-x-2">
@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'settings' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'settings' ? 'text-treal-900' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('settings')}
               >
                 <div className="flex items-center space-x-2">
@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
           {role === 'student' && (
             <>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'profile' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'profile' ? 'text-teal-950 font-semibold' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('profile')}
               >
                 <div className="flex items-center space-x-2">
@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'enrolledCourse' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'enrolledCourse' ? 'text-teal-950 font-semibold' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('enrolledCourse')}
               >
                 <div className="flex items-center space-x-2">
@@ -85,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'settings' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'settings' ? 'text-teal-950 font-semibold' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('settings')}
               >
                 <div className="flex items-center space-x-2">
@@ -93,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'studentPartner' ? 'text-green-400': 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'studentPartner' ? 'text-teal-950 font-semibold': 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('studentPartner')}
               >
                 <div className="flex items-center space-x-2">
@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setView, currentView }) => {
                 </div>
               </li>
               <li
-                className={`mb-4 cursor-pointer ${currentView === 'purchase' ? 'text-green-400' : 'text-gray-200 hover:text-white'}`}
+                className={`mb-4 cursor-pointer ${currentView === 'purchase' ? 'text-teal-950 font-semibold' : 'text-gray-200 hover:text-white'}`}
                 onClick={() => setView('purchase')}
               >
                 <div className="flex items-center space-x-2">
