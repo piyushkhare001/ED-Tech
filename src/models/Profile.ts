@@ -23,16 +23,13 @@ const ProfileSchema = new Schema<IProfile>({
 
   dateOfBirth: {
     type: Date,
-    required: true
   },
   gender: {
     type: String,
     enum: ['male', 'female', 'other'],
-    required: true
   },
   mobile: {
     type: String,
-    required: true,
     unique: true
   },
   about: {
