@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
 
     const lectureIds = course.content; // Assuming `content` holds lecture IDs
     const lectures = await Lecture.find({ _id: { $in: lectureIds } });
-
+    console.log(lectures);
+    
     return NextResponse.json(
       {
         message: "Course found",

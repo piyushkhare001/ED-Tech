@@ -6,6 +6,7 @@ import cloudinary from "../../../../config/cloudinary";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";
 import { Readable } from "stream"; // Import the Readable stream
+import { Types } from "mongoose";
 
 export async function POST(req: NextRequest) {
   try {
@@ -97,7 +98,14 @@ export async function POST(req: NextRequest) {
     // Save the course to the database
     await newCourse.save();
 
-    // Return success response
+    const updateUser = await User.findByIdAndUpdate(
+      new Types.ObjectId(user._id),
+      { $push: { courses: newCourse._id } }
+    );
+    if (!updateUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     return NextResponse.json(
       { message: "Course created successfully", course: newCourse },
       { status: 201 }

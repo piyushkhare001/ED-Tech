@@ -2,7 +2,6 @@ import {
   BookText,
   ChevronLeft,
   ChevronRight,
-  CircleCheck,
   House,
   SquarePlay,
 } from "lucide-react";

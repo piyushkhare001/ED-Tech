@@ -1,10 +1,13 @@
 // src/app/components/TeacherTable.tsx
 import { useEffect, useState } from "react";
+import Alert from "../ui/alertTeacherCourse";
+import { useRouter } from "next/navigation";
 
 interface User {
   email: string;
-  verified: boolean;
+  verified: string;
   courses: any;
+  _id: string;
 }
 
 interface UserTableProps {
@@ -23,35 +26,118 @@ export default function TeacherTable({
   const [users, setUsers] = useState<User[]>([]);
   const [total, setTotal] = useState(0);
   const limit = 10;
+  const [handleAlert, setHandleAlert] = useState({
+    color: "",
+    message: "",
+    visible: false,
+  });
+  const route = useRouter();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(
-          `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
-        );
-        const data = await response.json();
-        setUsers(data.data)
-        setTotal(data.total);
-      } catch (e) {console.log(e)
-      ;alert('error in user table')}
+  async function fetchData() {
+    try {
+      const response = await fetch(
+        `/api/admin/instructor?search=${search}&status=${status}&page=${page}`
+      );
+      const data = await response.json();
+      setUsers(data.data);
+      setTotal(data.total);
+    } catch (e) {
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
     }
+  }
+  useEffect(() => {
     fetchData();
   }, [search, status, page]);
 
   const totalPages = Math.ceil(total / limit);
-  const handleApproval = async()=>{
-    try{
-      const req = await fetch('/api/admin/instructor')
 
-    }catch(e){
-alert('smo on handle approval')
+  const handleApproval = async (id: string, action: string) => {
+    try {
+      const req = await fetch("/api/admin/instructor", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          action,
+        }),
+      });
+      const data = await req.json();
+      console.log(data);
+
+      if (req.status === 201) {
+        setHandleAlert({
+          color: "green",
+          message: data.message,
+          visible: true,
+        });
+        fetchData();
+        return;
+      }
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
+    } catch (e) {
+      setHandleAlert({
+        color: "red",
+        message: "An error occurred in Server kindly try again",
+        visible: true,
+      });
     }
+  };
+  // const handleDecline = async (id: string) => {
+  //   try {
+  //     const req = await fetch("/api/admin/instructor", {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         id: id,
+  //         action: "approved",
+  //       }),
+  //     });
+  //     const data = await req.json();
+  //     console.log(data);
 
-  }
+  //     if (req.status === 201) {
+  //       setHandleAlert({
+  //         color: "green",
+  //         message: data.message,
+  //         visible: true,
+  //       });
+  //       fetchData();
+  //       return;
+  //     }
+  //     setHandleAlert({
+  //       color: "red",
+  //       message: "An error occurred in Server kindly try again",
+  //       visible: true,
+  //     });
+  //   } catch (e) {
+  //     setHandleAlert({
+  //       color: "red",
+  //       message: "An error occurred in Server kindly try again",
+  //       visible: true,
+  //     });
+  //   }
+  // };
 
   return (
     <div className="">
+      <Alert
+        message={handleAlert.message}
+        visible={handleAlert.visible}
+        color={handleAlert.color}
+        setIsVisible={setHandleAlert}
+      />
       <table className="table-auto w-full rounded-md shadow-md border">
         <thead>
           <tr className="bg-gray-200">
@@ -65,19 +151,43 @@ alert('smo on handle approval')
           {users.map((user) => (
             <tr key={user.email}>
               <td className="p-2 border">{user.email}</td>
-              <td className="p-2 border text-center">{user.verified ? "Yes" : "No"}</td>
-              <td className="p-2 border text-center">{user.courses?user.courses.length:0}</td>
+              <td className="p-2 border text-center">{user.verified}</td>
               <td className="p-2 border text-center">
-                {user.verified ? (
-                  <button className="bg-red-500 text-white px-2 py-1 rounded">
-                    Block
-                  </button>
+                {user.courses ? user.courses.length : 0}
+              </td>
+              <td className="p-2 border text-center">
+                {user.verified === "approved" ? (
+                  <div>
+                    {user.courses.length > 0 ? (
+                      <button
+                        onClick={() =>
+                          route.push(`/admin/courses?id=${user._id}`)
+                        }
+                        className="bg-green-500 text-white px-2 py-1 mr-2 rounded"
+                      >
+                        View Courses
+                      </button>
+                    ) : null}
+                    <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
+                      Delete
+                    </button>
+                  </div>
                 ) : (
                   <div>
-                    <button className="bg-green-500 text-white px-2 py-1 mr-2 rounded">
+                    <button
+                      onClick={() => {
+                        handleApproval(user._id, "approved");
+                      }}
+                      className="bg-green-500 text-white px-2 py-1 mr-2 rounded"
+                    >
                       Approve
                     </button>
-                    <button className="bg-red-500 text-white px-2 py-1 mr-2 rounded">
+                    <button
+                      onClick={() => {
+                        handleApproval(user._id, "decline");
+                      }}
+                      className="bg-red-500 text-white px-2 py-1 mr-2 rounded"
+                    >
                       Decline
                     </button>
                   </div>

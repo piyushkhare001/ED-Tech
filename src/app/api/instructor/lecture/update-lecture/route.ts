@@ -57,12 +57,15 @@ export async function PUT(req: NextRequest, res: NextResponse) {
   const formData = await req.formData();
   const lectureId = formData.get("lectureId");
   const title = formData.get("title");
+  const duration = formData.get("duration");
   const description = formData.get("description");
   const video = formData.get("video");
   const thumbnail = formData.get("thumbnail");
+  console.log(thumbnail);
+  
   const type = formData.get("type");
   const hidden = formData.get("hidden") === "true";
-  console.log(lectureId);
+
   if (!lectureId) {
     return NextResponse.json(
       { message: "Lecture ID is required" },
@@ -83,6 +86,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     const updateFields: any = {};
 
     if (title) updateFields.title = title;
+    if (duration !== undefined) updateFields.duration = Number(duration);
     if (description) updateFields.description = description;
     if (video) updateFields.video = video;
     if (thumbnail) updateFields.thumbnail = thumbnail;
@@ -93,7 +97,6 @@ export async function PUT(req: NextRequest, res: NextResponse) {
     const updatedLecture = await Lecture.findByIdAndUpdate(
       lectureId,
       { $set: updateFields },
-      { new: true }
     );
 
     return NextResponse.json({

@@ -62,7 +62,7 @@ export async function GET(
     const limit = 10;
     const filter: any = {};
     if (status && status !== "all") {
-      filter.verified = status === "verified";
+      filter.verified = status;
     }
     if (search) {
       filter.email = { $regex: search, $options: "i" }; // Case-insensitive search
@@ -90,7 +90,7 @@ export async function GET(
 // UPDATE an instructor by ID
 export async function PATCH(req: Request) {
   try {
-    const { id, action, data } = await req.json();
+    const { id, action } = await req.json();
 
     // Fetch the current state of the user to apply conditional updates
     const instructor = await User.findById(id);
@@ -102,7 +102,7 @@ export async function PATCH(req: Request) {
     }
 
     // Initialize update object with other provided fields
-    const updateData = { ...data };
+    const updateData = { verified: action };
 
     // Handle verification status update based on current status and action
     if (action === "approve") {
@@ -147,7 +147,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({
       message: `Instructor ${action}d successfully`,
       updatedInstructor,
-    });
+    },{status:201});
   } catch (error) {
     return NextResponse.json(
       { message: "Error updating instructor", error },

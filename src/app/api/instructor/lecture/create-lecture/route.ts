@@ -19,6 +19,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   const formData = await req.formData();
   const title = formData.get("title");
+  const duration = formData.get("duration");
   const description = formData.get("description");
   const courseId = formData.get("courseId");
   const video = formData.get("video"); // This should be a file object
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const newLecture = await Lecture.create({
       type,
       title,
+      duration:Number(duration),
       description,
       thumbnail: thumbnail,
       hidden,

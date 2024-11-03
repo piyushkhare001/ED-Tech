@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import ButtonSpinner from "@/components/ui/buttonSpinner";
 //import { FaTimesCircle } from "react-icons/fa"; // Import a remove icon (react-icons library)
-// import DocumentEditor from "@/components/ui/documentEditor";
 //import { color } from "framer-motion";
 import axios from "axios";
 import { IoCode } from "react-icons/io5";
@@ -15,19 +14,20 @@ import { IoCode } from "react-icons/io5";
 //import Navbar from "@/components/frontend/Navbar";
 import removeHtmlTags from "@/lib/utility/removeHTML";
 interface Lecture {
-  type: { type: String };
-  title: { type: String };
-  hidden: { type: Boolean };
-  description: { type: String };
-  thumbnail: { type: String };
-  createdAt: { type: Date };
-  video: { type: String };
-  _id: { type: String };
+  type: string;
+  title: string;
+  hidden: boolean;
+  description: string;
+  thumbnail: string;
+  createdAt: Date;
+  video: string;
+  duration: number;
+  _id: string;
 }
 
 const AddCourse = () => {
   const route = useRouter();
-  const [coursePrice, setCoursePrice] = useState("");
+  const [coursePrice, setCoursePrice] = useState("0");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -42,7 +42,8 @@ const AddCourse = () => {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [lType, setlType] = useState("");
   const [lTitle, setlTitle] = useState("");
-  const [lHidden, setlHidden] = useState<Boolean>(false);
+  const [lDuration, setlDuration] = useState("");
+  const [lHidden, setlHidden] = useState<boolean>(false);
   const [lDescription, setlDescription] = useState("");
   const [lThumbnailLink, setlThumbnailLink] = useState("");
   const [lVideoLink, setlVideoLink] = useState("");
@@ -70,6 +71,7 @@ const AddCourse = () => {
   const handleLecture = async () => {
     const formData = new FormData();
     formData.append("title", lTitle);
+    formData.append("duration", lDuration);
     formData.append("type", lType);
     formData.append("description", lDescription);
     formData.append("thumbnail", lThumbnailLink);
@@ -77,11 +79,11 @@ const AddCourse = () => {
     formData.append("hidden", lHidden == false ? "false" : "true");
     formData.append("courseId", id);
 
-    let search = new URL(window.location.href).search.split("&");
-    if (!search[1]) {
-      search[1] = "";
+    let search = new URL(window.location.href).searchParams.get("lid");
+    if (!search) {
+      search = "";
     }
-    if (lid === "" && search[1].slice(0, 3) !== "lid") {
+    if (lid === "" && !search) {
       try {
         const req = await fetch("/api/instructor/lecture/create-lecture", {
           method: "POST",
@@ -92,7 +94,7 @@ const AddCourse = () => {
         if (req.status == 200) {
           route.push(`/instructor/course?id=${id}&lid=${res.lecture._id}`);
           setlid(res._id);
-          handleLocationDraft(null);
+          handleLocationDraft(res.lecture._id);
           setHandleAlert({
             color: "green",
             message: res.message,
@@ -112,9 +114,9 @@ const AddCourse = () => {
           visible: true,
         });
       }
-    } else if (lid !== "" || search[1].slice(0, 3) === "lid") {
+    } else if (lid !== "" || search) {
       try {
-        formData.append("lectureId", lid ? lid : search[1].slice(4));
+        formData.append("lectureId", lid ? lid : search);
         const req = await fetch("/api/instructor/lecture/update-lecture", {
           method: "PUT",
           body: formData,
@@ -159,9 +161,9 @@ const AddCourse = () => {
       const formData = new FormData();
       formData.append("thumbnail", e.target.files[0]);
 
-      const search = new URL(window.location.href).search.split("&");
-      if (lid || search[1]) {
-        formData.append("lid", lid || search[1].slice(4));
+      const search = new URL(window.location.href).searchParams.get("lid");
+      if (lid || search) {
+        formData.append("lid", lid || String(search));
       }
       const req = await fetch("/api/instructor/lecture/upload-image", {
         method: "POST",
@@ -186,9 +188,9 @@ const AddCourse = () => {
     if (e.target.files && e.target.files.length > 0) {
       const formData = new FormData();
       formData.append("file", e.target.files[0]);
-      const search = new URL(window.location.href).search.split("&");
-      if (lid || search[1]) {
-        formData.append("lid", lid || search[1].slice(4));
+      const search = new URL(window.location.href).searchParams.get("lid");
+      if (lid || search) {
+        formData.append("lid", lid || String(search));
       } else {
         return;
       }
@@ -200,11 +202,11 @@ const AddCourse = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-            onUploadProgress: (progressEvent) => {
+            onUploadProgress: (progressEvent: any) => {
               const percentCompleted = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
               );
-              setProgress(percentCompleted); // Update progress bar
+              setProgress(percentCompleted - 1); // Update progress bar
             },
           }
         );
@@ -232,51 +234,46 @@ const AddCourse = () => {
   };
   const handleLocationDraft = async (lectid: any) => {
     try {
-      const search = new URL(window.location.href).search.split("&");
-      if (search) {
-        if (search[0].slice(0, 3) == "?id") {
-          const id = search[0].slice(4);
-          const req = await fetch(`/api/instructor/course`, {
-            method: "POST",
-            body: JSON.stringify({ id }),
-            headers: { "Content-Type": "multipart/" },
-          });
-          const res = await req.json();
-          console.log(res);
+      const id = new URL(window.location.href).searchParams.get("id");
+      const lid = new URL(window.location.href).searchParams.get("lid");
+      if (id) {
+        const req = await fetch(`/api/instructor/course`, {
+          method: "POST",
+          body: JSON.stringify({ id }),
+          headers: { "Content-Type": "multipart/" },
+        });
+        const res = await req.json();
+        console.log(res.lectures);
 
-          if (res.course) {
-            setDrafted(true);
-            setTitle(res.course.title);
-            setDescription(res.course.description);
-            setCoursePrice(res.course.price);
-            setOpenToEveryone(res.course.openToEveryone);
-            setPublish(res.course.publish);
-            setThumbnailLink(res.course.imageUrl);
-            setId(res.course._id);
-            setLectures(res.lectures);
-          } else {
-            await route.push("/instructor/course");
-            setHandleAlert({
-              color: "red",
-              message: "Error from server while loading course",
-              visible: true,
-            });
-          }
+        if (res.course) {
+          setDrafted(true);
+          setTitle(res.course.title);
+          setDescription(res.course.description);
+          setCoursePrice(res.course.price);
+          setOpenToEveryone(res.course.openToEveryone);
+          setPublish(res.course.publish);
+          setThumbnailLink(res.course.imageUrl);
+          setId(res.course._id);
+          setLectures(res.lectures);
+        } else {
+          await route.push("/instructor/course");
+          setHandleAlert({
+            color: "red",
+            message: "Error from server while loading course",
+            visible: true,
+          });
         }
 
-        if (search[1] || lectid) {
-          let id = lectid;
-          if (!lectid) {
-            id = search[1].slice(4);
-          }
+        if (lid || lectid) {
           const req = await fetch(`/api/instructor/lecture`, {
             method: "POST",
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id: lid || lectid }),
             headers: { "Content-Type": "application/json" },
           });
           const res = await req.json();
           if (res.lecture) {
             setlTitle(res.lecture.title);
+            setlDuration(res.lecture.duration);
             setlType(res.lecture.type);
             setlHidden(res.lecture.hidden);
             setlDescription(res.lecture.description);
@@ -296,8 +293,6 @@ const AddCourse = () => {
         setLoader(false);
       }
     } catch (e) {
-      console.log(e);
-
       setHandleAlert({
         color: "red",
         message: "Something went worng in server.",
@@ -312,77 +307,86 @@ const AddCourse = () => {
     setLoader(false);
   }, []);
 
-  const handleDraft = async () => {
+  const handleDraft = async (publish = false) => {
     try {
-      // Course part
       const formData = new FormData();
       formData.append("title", title); // Assuming title is a state variable
       formData.append("description", description); // Assuming description is a state variable
       formData.append("category", category); // Assuming category is a state variable
       formData.append("price", coursePrice); // Assuming coursePrice is a state variable
-      formData.append("openToEveryone", openToEveryone);
-      formData.append("publish", publish);
-      formData.append("lectures", lectures);
-      if (status === 1 || status === 2) {
-        setButtonLoader({ id: 1, status: true });
-        if (thumbnail) {
-          formData.append("thumbnail", thumbnail); // Assuming thumbnail is a file object
-        }
-        if (!id) {
-          const req = await fetch("/api/instructor/course/create-course", {
-            method: "POST",
-            body: formData,
+      formData.append("openToEveryone", String(openToEveryone));
+      formData.append("publish", String(publish));
+      formData.append("lectures", JSON.stringify(lectures));
+      setButtonLoader({ id: 1, status: true });
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail); // Assuming thumbnail is a file object
+      }
+      if (!id) {
+        if (title === "" || description === "" || !thumbnail) {
+          return setHandleAlert({
+            color: "yellow",
+            message: "Please fill all the required fields!",
+            visible: true,
           });
-
-          const res = await req.json();
-          setButtonLoader({ id: 1, status: false });
-          if (req.status == 201) {
-            setDrafted(true);
-            setThumbnailLink(res.course.imageUrl || "");
-            setPublish(res.course.publish);
-            setThumbnailLink(res.course.imageUrl);
-            setId(res.course._id);
-            setLectures(res.lectures);
-            route.push(`/instructor/course?id=${res.course._id}`);
-            return setHandleAlert({
-              color: "green",
-              message: "Course created successfully!",
-              visible: true,
-            });
-          }
-          // } else if (search[0].slice(0, 3) == "?id") {
-        } else if (id) {
-          formData.append("id", id);
-          const req = await fetch("/api/instructor/course/update-course", {
-            method: "POST",
-            body: formData,
-          });
-
-          const res = await req.json();
-          setButtonLoader({ id: 1, status: false });
-
-          if (req.status == 200) {
-            setDrafted(true);
-            setThumbnailLink(res.imageUrl || "");
-            setPublish(res.course.publish);
-            setId(res.course._id);
-            setLectures(res.lectures);
-            return setHandleAlert({
-              color: "green",
-              message: "Course updated successfully!",
-              visible: true,
-            });
-          }
         }
-        return setHandleAlert({
-          color: "red",
-          message: "An error occurred in Server kindly try again",
-          visible: true,
+        const req = await fetch("/api/instructor/course/create-course", {
+          method: "POST",
+          body: formData,
         });
+
+        const res = await req.json();
+        setButtonLoader({ id: 1, status: false });
+        if (req.status == 201) {
+          setDrafted(true);
+          setThumbnailLink(res.course.imageUrl ? res.course.imageUrl : "");
+          setThumbnail(null);
+          setId(res.course._id);
+          setLectures(res.lectures);
+          route.push(`/instructor/course?id=${res.course._id}`);
+          return setHandleAlert({
+            color: "green",
+            message: "Course created successfully!",
+            visible: true,
+          });
+        } else {
+          return setHandleAlert({
+            color: "red",
+            message: res.message,
+            visible: true,
+          });
+        }
+        // } else if (search[0].slice(0, 3) == "?id") {
+      }
+      if (id) {
+        formData.append("id", id);
+        const req = await fetch("/api/instructor/course/update-course", {
+          method: "POST",
+          body: formData,
+        });
+
+        const res = await req.json();
+
+        setButtonLoader({ id: 1, status: false });
+        if (req.status == 200) {
+          setDrafted(true);
+          setThumbnail(null);
+          setThumbnailLink(
+            res.thumbnailLink
+              ? res.thumbnailLink
+              : res.course.imageUrl
+              ? res.course.imageUrl
+              : ""
+          );
+          setId(res.course._id);
+          setLectures(res.lectures);
+          return setHandleAlert({
+            color: "green",
+            message: "Course updated successfully!",
+            visible: true,
+          });
+        }
       }
     } catch (err) {
-      console.log(err);
-
       setHandleAlert({
         color: "red",
         message: "An error occurred in Server kindly try again",
@@ -450,17 +454,16 @@ const AddCourse = () => {
       });
     }
   };
-
   return (
     <>
-      
       <div className="min-h-screen flex bg-white">
         {/* Sidebar */}
-       
+
         <Alert
           message={handleAlert.message}
           visible={handleAlert.visible}
           color={handleAlert.color}
+          setIsVisible={setHandleAlert}
         />
         {/* Modal */}
         <>
@@ -580,7 +583,7 @@ const AddCourse = () => {
                     className={`w-10 h-10 rounded-full bg-gray-${
                       status === 3 ? "900" : "500"
                     } flex items-center justify-center text-white cursor-pointer`}
-                    onClick={(e) => setstatus(3)}
+                    onClick={(e) => {setstatus(3);handleLocationDraft(null)}}
                   >
                     3
                   </div>
@@ -701,45 +704,6 @@ const AddCourse = () => {
                           </h4>
                         </div>
                       </div>
-                      {/* <div className="mb-4 w-1/2">
-                        <label
-                          className="block text-gray-900 mb-2"
-                          htmlFor="category"
-                        >
-                          Open to every one{" "}
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex items-center">
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={openToEveryone}
-                              onChange={() =>
-                                setOpenToEveryone(!openToEveryone)
-                              }
-                            />
-                            <div
-                              className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
-                                openToEveryone
-                                  ? "bg-green-500"
-                                  : "bg-gray-300 shadow-md"
-                              } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
-                            >
-                              <span
-                                className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
-                                  openToEveryone ? "translate-x-5" : ""
-                                }`}
-                              ></span>
-                            </div>
-                          </label>
-                          <h4 className="ml-4 text-gray-900">
-                            {lHidden
-                              ? "Lecture is hidden."
-                              : "Lecture is visible."}
-                          </h4>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   {/* Course Thumbnail */}
@@ -933,51 +897,77 @@ const AddCourse = () => {
                     </div>
                   </div>
                   {/* Lecture Description */}
-                  <div className="mt-12">
+                  <div className="mt-6">
                     <label className="block text-gray-900 mb-2">
                       Lecture Description{" "}
                       <span className="text-red-500"> *</span>
                     </label>
-                    {/* <DocumentEditor
-                      content={lDescription}
-                      setContent={setlDescription}
-                    /> */}
+                    <textarea
+                      placeholder="Enter Description"
+                      className="w-full p-3 rounded-lg bg-gray-100 shadow-md text-gray-900 border border-gray-700 focus:border-yellow-500 focus:outline-none"
+                      rows={8}
+                      value={lDescription}
+                      onChange={(e) => setlDescription(e.target.value)}
+                    ></textarea>{" "}
                   </div>
                   {/* Lecture check box*/}
                   <div className="w-1/2">
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-900 mb-2"
-                        htmlFor="category"
-                      >
-                        Disable this Lecture{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center">
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={lHidden}
-                            onChange={() => setlHidden(!lHidden)}
-                          />
-                          <div
-                            className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
-                              lHidden ? "bg-green-500" : "bg-gray-300 shadow-md"
-                            } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
-                          >
-                            <span
-                              className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
-                                lHidden ? "translate-x-5" : ""
-                              }`}
-                            ></span>
-                          </div>
+                    <div className="flex my-4">
+                      <div className="">
+                        <label
+                          className="block text-gray-900 mb-2"
+                          htmlFor="category"
+                        >
+                          Lecture Duration
+                          <span className="text-red-500">*</span>
                         </label>
-                        <h4 className="ml-4 text-gray-900">
-                          {lHidden
-                            ? "Lecture is hidden."
-                            : "Lecture is visible."}
-                        </h4>
+                        <div className="flex items-center">
+                          <label className="relative inline-flex items-center cursor-pointer"></label>
+                          <input
+                            type="number"
+                            placeholder="Ex. 60 mins or 130 mins Always in minutes"
+                            value={lDuration}
+                            onChange={(e) => setlDuration(e.target.value)}
+                            className="w-full p-3 rounded-lg bg-gray-100 shadow-md text-gray-900 border border-gray-700 focus:border-yellow-500 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <label
+                          className="block text-gray-900 mb-2"
+                          htmlFor="category"
+                        >
+                          Disable this Lecture{" "}
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex items-center">
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="sr-only"
+                              checked={lHidden}
+                              onChange={() => setlHidden(!lHidden)}
+                            />
+                            <div
+                              className={`w-11 h-6 bg-gray-300 shadow-md rounded-full ${
+                                lHidden
+                                  ? "bg-green-500"
+                                  : "bg-gray-300 shadow-md"
+                              } peer peer-focus:ring-green-300 peer-checked:bg-green-500 transition duration-300 ease-in-out`}
+                            >
+                              <span
+                                className={`absolute w-5 h-5 bg-white mt-[2px] mx-[2px] rounded-full shadow-md transform transition ${
+                                  lHidden ? "translate-x-5" : ""
+                                }`}
+                              ></span>
+                            </div>
+                          </label>
+                          <h4 className="ml-4 text-gray-900">
+                            {lHidden
+                              ? "Lecture is hidden."
+                              : "Lecture is visible."}
+                          </h4>
+                        </div>
                       </div>
                     </div>
                     <div className="mb-4">
@@ -1003,6 +993,7 @@ const AddCourse = () => {
                               route.replace(`course?id=${id}`);
                               setlDescription("");
                               setlTitle("");
+                              setlDuration("");
                               setlHidden(false);
                               setlThumbnailLink("");
                               setlVideoLink("");
@@ -1020,82 +1011,94 @@ const AddCourse = () => {
               ) : status === 3 ? (
                 <div className="w-full mt-24">
                   <ul className="w-full">
-                    {lectures
-                      ? lectures.map((e, i) => {
-                          return (
-                            <>
-                              <li
-                                className="text-gray-100 flex w-full mb-6"
-                                key={String(Date.now()) + e._id}
-                              >
-                                {e.thumbnail ? (
-                                  <img
-                                    src={e.thumbnail}
-                                    alt=""
-                                    className="max-w-64 w-64 max-h-1/2 rounded-md"
-                                  />
-                                ) : (
-                                  <div className="max-w-64 min-w-64 w-64 h-full h-32 flex justify-center items-center">
-                                    <IoCode className="text-gray-900 w-5 h-5" />
-                                  </div>
-                                )}
-                                <div className="flex flex-col mx-10 justify-between w-full">
-                                  <div>
-                                    <h3 className="text-xl mt-2 text-gray-900 font-bold">
-                                      {e.title || "Untitled Lecture"}
-                                    </h3>
-                                    <h3 className="text-md text-gray-900">
-                                      {String(
-                                        removeHtmlTags(
-                                          e.description || "No Description "
-                                        )
-                                      ).slice(0, 150)}
-                                      {String(removeHtmlTags(e.description))
-                                        .length > 150
-                                        ? "..."
-                                        : null}
-                                    </h3>
-                                    <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
-                                      {e.type}
-                                    </h3>
-                                  </div>
-                                  <div className="flex w-64">
-                                    <button
-                                      className="m-2 mx-0 w-full py-2 rounded bg-green-500 "
-                                      onClick={(ele) => {
-                                        route.push(
-                                          `/instructor/course?id=${id}&lid=${e._id}`
-                                        );
-                                        handleLocationDraft(e._id);
-                                        setstatus(2);
-                                      }}
-                                    >
-                                      Update
-                                    </button>
-                                    <button
-                                      className="m-2 w-full py-2 rounded bg-red-500 "
-                                      onClick={(ele) =>
-                                        setModalState({
-                                          desc: "Are Sure you want to delete this Lecture once the Lecture been deleted it can not be retrived.",
-                                          isOpen: true,
-                                          title: "Delete Lecture",
-                                          id: String(e._id),
-                                          couse: false,
-                                        })
-                                      }
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
-                                </div>
-                              </li>
+                    {lectures.map((e, i) => {
+                      return (
+                        <React.Fragment key={e._id}>
+                          <li
+                            className="text-gray-100 md:flex w-full mb-6"
+                            key={e._id}
+                          >
+                            <div>
                               {e.thumbnail ? (
-                                <hr className="w-full m-2 mb-6" />
-                              ) : null}
-                            </>
-                          );
-                        })
-                      : null}
+                                <img
+                                  src={e.thumbnail}
+                                  alt=""
+                                  className="max-w-64 w-64 max-h-1/2 rounded-md"
+                                />
+                              ) : (
+                                <div className="max-w-64 min-w-64 w-64 h-32 flex justify-center items-center">
+                                  <IoCode className="text-gray-900 w-5 h-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex flex-col md:mx-10 justify-between w-full">
+                              <div>
+                                <h3 className="text-xl mt-2 text-gray-900 font-bold">
+                                  {e.title || "Untitled Lecture"}
+                                </h3>
+                                <h3 className="text-md text-gray-900">
+                                  {String(
+                                    removeHtmlTags(
+                                      e.description || "No Description "
+                                    )
+                                  ).slice(0, 150)}
+                                  {String(removeHtmlTags(e.description))
+                                    .length > 150
+                                    ? "..."
+                                    : null}
+                                </h3>
+                                <div className="flex">
+                                  <h3 className="text-sm mt-2 text-gray-100 bg-gray-900 rounded px-2 py-1 w-fit ">
+                                    {e.type}
+                                  </h3>
+                                  <h3 className="text-sm mt-2 text-gray-900 px-2 py-1 w-fit ">
+                                    {e.duration} {e.duration ? "Mins" : ""}
+                                  </h3>
+                                </div>
+                              </div>
+                              <div className="flex w-64">
+                                <button
+                                  className="m-2 mx-0 w-full py-2 rounded bg-green-500 "
+                                  onClick={(ele) => {
+                                    route.push(
+                                      `/instructor/course?id=${id}&lid=${e._id}`
+                                    );
+                                    setlTitle(e.title);
+                                    setlDuration(String(e.duration));
+                                    setlType(e.type);
+                                    setlHidden(e.hidden);
+                                    setlDescription(e.description);
+                                    setlThumbnailLink(e.thumbnail);
+                                    setlVideoLink(e.video);
+                                    setlid(e._id);
+                                    setstatus(2);
+                                  }}
+                                >
+                                  Update
+                                </button>
+                                <button
+                                  className="m-2 w-full py-2 rounded bg-red-500 "
+                                  onClick={(ele) =>
+                                    setModalState({
+                                      desc: "Are Sure you want to delete this Lecture once the Lecture been deleted it can not be retrived.",
+                                      isOpen: true,
+                                      title: "Delete Lecture",
+                                      id: String(e._id),
+                                      couse: false,
+                                    })
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </li>
+                          {e.thumbnail ? (
+                            <hr className="w-full m-2 mb-6" />
+                          ) : null}
+                        </React.Fragment>
+                      );
+                    })}
                     {lectures.length == 0 ? (
                       <li className="text-center flex justify-center items-center p-4 text-gray-800">
                         <h2>No Lecture found</h2>
@@ -1126,13 +1129,12 @@ const AddCourse = () => {
                 </div>
               )}
               {/* Navigation Buttons */}
-              <div className="flex justfy-between w-full">
-                <div className="w-full"></div>
-                <div className="flex justify-end mt-8 space-x-4">
+              <div>
+                <div className="w-full flex justify-end mt-8 space-x-4">
                   {status == 1 ? (
                     <>
                       <button
-                        onClick={handleDraft}
+                        onClick={() => handleDraft()}
                         className="py-2 px-6 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
                       >
                         {buttonLoader.status && buttonLoader.id === 1 ? (
@@ -1186,9 +1188,9 @@ const AddCourse = () => {
                   {status === 4 ? (
                     !publish ? (
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           setPublish(true);
-                          handleDraft();
+                          await handleDraft(true);
                         }}
                         className="py-2 px-6 rounded-lg bg-green-500 text-white hover:bg-green-600"
                       >
@@ -1196,9 +1198,9 @@ const AddCourse = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           setPublish(false);
-                          handleDraft();
+                          await handleDraft();
                         }}
                         className="py-2 px-6 rounded-lg bg-green-500 text-white hover:bg-green-600"
                       >

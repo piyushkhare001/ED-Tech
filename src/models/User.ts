@@ -35,12 +35,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     enum: ["student", "admin", "teacher"],
     default: "student",
   },
-  verified: {
-    type: String,
-    enum: ["approved", "declined", "blocked", "In progress"],
-    default: "In progress",
-  },
-  collegeName: { type: String },
+  verified: { type: String, enum:['approved','declined','pending'],default:'pending' },
   resetPasswordToken: { type: String },
   resetPasswordExpiresAt: { type: Date },
   otp: { type: String },

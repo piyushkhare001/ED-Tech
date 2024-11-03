@@ -3,6 +3,7 @@ import mongoose, { Model } from "mongoose";
 export interface Ilecture {
   type: string;
   title: string;
+  duration:number;
   hidden: boolean;
   description?: string;
   thumbnail?: string;
@@ -15,6 +16,7 @@ export interface Ilecture {
 const LectureSchema = new mongoose.Schema<Ilecture>({
   type: { type: String, default: "page" },
   title: { type: String }, // Mark title as required
+  duration: { type: Number }, // Mark title as required
   hidden: { type: Boolean, default: false },
   description: { type: String },
   thumbnail: { type: String },
